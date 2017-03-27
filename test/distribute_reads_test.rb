@@ -1,0 +1,71 @@
+require_relative "test_helper"
+
+class DistributeReadsTest < Minitest::Test
+  def setup
+    # reset context
+    Makara::Context.set_current(Makara::Context.generate)
+  end
+
+  def test_default
+    assert_primary
+  end
+
+  def test_default_to_primary
+    DistributeReads.default_to_primary = false
+    assert_replica
+  ensure
+    DistributeReads.default_to_primary = true
+  end
+
+  def test_distribute_reads
+    insert_value
+    assert_primary
+    distribute_reads do
+      assert_replica
+      insert_value
+      assert_replica
+    end
+  end
+
+  def test_distribute_reads_transaction
+    distribute_reads do
+      ActiveRecord::Base.transaction do
+        assert_primary
+      end
+    end
+  end
+
+  def test_max_lag
+    DistributeReads.stub(:lag, 2) do
+      assert_raises DistributeReads::TooMuchLag do
+        distribute_reads(max_lag: 1) do
+          assert_replica
+        end
+      end
+    end
+  end
+
+  def test_max_lag_under
+    distribute_reads(max_lag: 1) do
+      assert_replica
+    end
+  end
+
+  private
+
+  def current_database
+    ActiveRecord::Base.connection.execute("SELECT current_database()").first["current_database"].split("_").last
+  end
+
+  def insert_value
+    User.create!(name: "Boom")
+  end
+
+  def assert_primary
+    assert_equal "primary", current_database
+  end
+
+  def assert_replica
+    assert_equal "replica", current_database
+  end
+end
