@@ -31,11 +31,14 @@ default: &default
 development:
   <<: *default
 
+test:
+  <<: *default
+
 production:
   <<: *default
 ```
 
-**Note:** You can use the same instance for the primary and replica in development.
+**Note:** You can use the same instance for the primary and replica in development and tests.
 
 By default, all reads go to the primary instance. To use the replica, do:
 
