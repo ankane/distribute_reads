@@ -33,6 +33,19 @@ class DistributeReadsTest < Minitest::Test
     assert_cache_size 0
   end
 
+  def test_distribute_reads_default_to_primary_false
+    DistributeReads.default_to_primary = false
+    distribute_reads do
+      assert_replica
+      insert_value
+      assert_replica
+    end
+    assert_primary
+    assert_cache_size 1
+  ensure
+    DistributeReads.default_to_primary = true
+  end
+
   def test_distribute_reads_transaction
     distribute_reads do
       ActiveRecord::Base.transaction do
