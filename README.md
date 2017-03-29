@@ -18,13 +18,13 @@ gem 'distribute_reads'
 
 ```yml
 default: &default
-  adapter: postgresql_makara
+  url: postgresql-makara:///
   makara:
     sticky: true
     connections:
       - role: master
         name: primary
-        url: <%= ENV["PRIMARY_DATABASE_URL"] %>
+        url: <%= ENV["DATABASE_URL"] %>
       - name: replica
         url: <%= ENV["REPLICA_DATABASE_URL"] %>
 
