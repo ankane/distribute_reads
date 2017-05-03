@@ -56,6 +56,20 @@ distribute_reads do
 end
 ```
 
+## Jobs [master]
+
+Distribute all reads in a job with:
+
+```ruby
+class TestJob < ApplicationJob
+  distribute_reads
+
+  def perform
+    # ...
+  end
+end
+```
+
 ## Options
 
 Raise an error when replica lag is too high - *PostgreSQL only*

@@ -71,11 +71,12 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  private
-
-  def current_database
-    ActiveRecord::Base.connection.execute("SELECT current_database()").first["current_database"].split("_").last
+  def test_active_job
+    TestJob.perform_now
+    assert_equal "replica", $current_database
   end
+
+  private
 
   def insert_value
     User.create!(name: "Boom")

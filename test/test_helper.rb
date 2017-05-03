@@ -3,6 +3,7 @@ Bundler.require(:default)
 require "minitest/autorun"
 require "minitest/pride"
 require "active_record"
+require "active_job"
 
 ActiveRecord::Base.establish_connection(
   adapter: "postgresql_makara",
@@ -27,4 +28,16 @@ ActiveRecord::Migration.create_table :users, force: true do |t|
 end
 
 class User < ActiveRecord::Base
+end
+
+class TestJob < ActiveJob::Base
+  distribute_reads
+
+  def perform
+    $current_database = current_database
+  end
+end
+
+def current_database
+  ActiveRecord::Base.connection.execute("SELECT current_database()").first["current_database"].split("_").last
 end

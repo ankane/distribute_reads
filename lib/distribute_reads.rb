@@ -23,3 +23,8 @@ end
 
 Makara::Proxy.send :prepend, DistributeReads::AppropriatePool
 Object.send :include, DistributeReads::GlobalMethods
+
+ActiveSupport.on_load(:active_job) do
+  require "distribute_reads/job_methods"
+  extend DistributeReads::JobMethods
+end
