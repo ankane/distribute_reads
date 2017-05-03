@@ -5,7 +5,7 @@ module DistributeReads
         if needs_master?(*args) || @slave_pool.completely_blacklisted?
           stick_to_master(*args) unless DistributeReads.default_to_primary
           @master_pool
-        elsif in_transaction?
+        elsif in_transaction? || Thread.current[:distribute_reads] == :never
           @master_pool
         else
           @slave_pool
