@@ -56,7 +56,7 @@ distribute_reads do
 end
 ```
 
-## Jobs [master]
+## Jobs
 
 Distribute all reads in a job with:
 
