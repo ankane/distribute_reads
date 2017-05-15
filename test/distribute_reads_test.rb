@@ -46,16 +46,6 @@ class DistributeReadsTest < Minitest::Test
     DistributeReads.default_to_primary = true
   end
 
-  def test_distribute_reads_never
-    DistributeReads.default_to_primary = false
-    distribute_reads(:never) do
-      assert_primary
-    end
-    assert_cache_size 0
-  ensure
-    DistributeReads.default_to_primary = true
-  end
-
   def test_distribute_reads_transaction
     distribute_reads do
       ActiveRecord::Base.transaction do
@@ -81,17 +71,9 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_job
+  def test_active_job
     TestJob.perform_now
     assert_equal "replica", $current_database
-  end
-
-  def test_distribute_reads_never_job
-    DistributeReads.default_to_primary = false
-    NeverJob.perform_now
-    assert_equal "primary", $current_database
-  ensure
-    DistributeReads.default_to_primary = true
   end
 
   private

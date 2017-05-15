@@ -86,12 +86,6 @@ Don’t default to primary (default Makara behavior)
 DistributeReads.default_to_primary = false
 ```
 
-In this mode, you can force reads to primary with: [master]
-
-```ruby
-distribute_reads(:never) { ... }
-```
-
 ## History
 
 View the [changelog](https://github.com/ankane/distribute_reads/blob/master/CHANGELOG.md)

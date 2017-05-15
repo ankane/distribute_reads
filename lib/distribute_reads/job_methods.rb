@@ -1,8 +1,8 @@
 module DistributeReads
   module JobMethods
-    def distribute_reads(mode = true, max_lag: nil)
+    def distribute_reads
       around_perform do |job, block|
-        distribute_reads(mode, max_lag: max_lag) { block.call }
+        distribute_reads { block.call }
       end
     end
   end

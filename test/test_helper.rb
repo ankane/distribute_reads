@@ -38,14 +38,6 @@ class TestJob < ActiveJob::Base
   end
 end
 
-class NeverJob < ActiveJob::Base
-  distribute_reads :never
-
-  def perform
-    $current_database = current_database
-  end
-end
-
 def current_database
   ActiveRecord::Base.connection.execute("SELECT current_database()").first["current_database"].split("_").last
 end
