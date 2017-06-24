@@ -1,6 +1,8 @@
 module DistributeReads
   module GlobalMethods
     def distribute_reads(max_lag: nil)
+      raise ArgumentError, "Missing block" unless block_given?
+
       if max_lag && DistributeReads.lag > max_lag
         raise DistributeReads::TooMuchLag, "Replica lag over #{max_lag} seconds"
       end
