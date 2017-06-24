@@ -76,6 +76,11 @@ class DistributeReadsTest < Minitest::Test
     assert_equal "replica", $current_database
   end
 
+  def test_missing_block
+    error = assert_raises(ArgumentError) { distribute_reads }
+    assert_equal "Missing block", error.message
+  end
+
   private
 
   def insert_value
