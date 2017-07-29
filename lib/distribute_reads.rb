@@ -14,7 +14,12 @@ module DistributeReads
   def self.lag
     conn = ActiveRecord::Base.connection
     if %w(PostgreSQL PostGIS).include?(conn.adapter_name)
-      conn.execute("SELECT EXTRACT(EPOCH FROM NOW() - pg_last_xact_replay_timestamp()) AS lag").first["lag"].to_f
+      conn.execute(
+        "SELECT CASE
+          WHEN pg_last_xlog_receive_location() = pg_last_xlog_replay_location() THEN 0
+          ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
+        END AS lag"
+      ).first["lag"].to_f
     else
       raise "Option not supported with this adapter"
     end
