@@ -1,3 +1,7 @@
+## 0.1.3 [unreleased]
+
+- Improved lag query
+
 ## 0.1.2
 
 - Raise `ArgumentError` when missing block
