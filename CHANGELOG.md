@@ -1,4 +1,4 @@
-## 0.1.2 [unreleased]
+## 0.1.2
 
 - Raise `ArgumentError` when missing block
 - Improved lag query
