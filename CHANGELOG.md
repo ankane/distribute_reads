@@ -2,6 +2,7 @@
 
 - Raise `ArgumentError` when missing block
 - Improved lag query
+- Warn if returning `ActiveRecord::Relation`
 
 ## 0.1.1
 

@@ -81,6 +81,14 @@ class DistributeReadsTest < Minitest::Test
     assert_equal "Missing block", error.message
   end
 
+  def test_relation
+    assert_output(nil, /\A\[distribute_reads\]/) do
+      distribute_reads do
+        User.all
+      end
+    end
+  end
+
   private
 
   def insert_value
