@@ -88,7 +88,7 @@ distribute_reads(max_lag: 3, lag_on: [ApplicationRecord, LogRecord]) do
 end
 ```
 
-Use primary when replica lag is too high - *PostgreSQL only* [master]
+Use primary when replica lag is too high [master]
 
 ```ruby
 distribute_reads(max_lag: 3, lag_failover: true) do
