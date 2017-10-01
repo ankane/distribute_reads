@@ -13,7 +13,6 @@ module DistributeReads
   end
   self.default_to_primary = true
   self.default_options = {
-    max_lag: nil,
     failover: true,
     lag_failover: false
   }

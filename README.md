@@ -108,7 +108,6 @@ Change the defaults [master]
 
 ```ruby
 DistributeReads.default_options = {
-  max_lag: nil,
   lag_failover: false,
   failover: true
 }
