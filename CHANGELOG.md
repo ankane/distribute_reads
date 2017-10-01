@@ -7,8 +7,9 @@ Breaking
 Other
 
 - Fixed `max_lag` option
-- Improved lag query
+- Added `lag_failover` option
 - Added `failover` option
+- Improved lag query
 
 ## 0.1.2
 

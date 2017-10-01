@@ -56,7 +56,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_max_lag
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).connections.first.stub(:execute, [{"lag" => 2}]) do
+    with_lag(2) do
       assert_raises DistributeReads::TooMuchLag do
         distribute_reads(max_lag: 1) do
           assert_replica
@@ -68,6 +68,14 @@ class DistributeReadsTest < Minitest::Test
   def test_max_lag_under
     distribute_reads(max_lag: 1) do
       assert_replica
+    end
+  end
+
+  def test_max_lag_failover
+    with_lag(2) do
+      distribute_reads(max_lag: 1, lag_failover: true) do
+        assert_primary
+      end
     end
   end
 
@@ -90,7 +98,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_failover_true
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+    with_replicas_blacklisted do
       distribute_reads do
         assert_primary
       end
@@ -98,7 +106,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_failover_false
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+    with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(failover: false) do
           assert_replica
@@ -120,6 +128,18 @@ class DistributeReadsTest < Minitest::Test
   end
 
   private
+
+  def with_replicas_blacklisted
+    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+      yield
+    end
+  end
+
+  def with_lag(lag)
+    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).connections.first.stub(:execute, [{"lag" => lag}]) do
+      yield
+    end
+  end
 
   def assert_primary
     assert_equal "primary", current_database

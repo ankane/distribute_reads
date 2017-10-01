@@ -1,6 +1,6 @@
 module DistributeReads
   module GlobalMethods
-    def distribute_reads(max_lag: nil, failover: true)
+    def distribute_reads(max_lag: nil, failover: true, lag_failover: false)
       raise ArgumentError, "Missing block" unless block_given?
 
       previous_value = Thread.current[:distribute_reads]
@@ -9,7 +9,11 @@ module DistributeReads
 
         # TODO ensure same connection is used to test lag and execute queries
         if max_lag && DistributeReads.lag > max_lag
-          raise DistributeReads::TooMuchLag, "Replica lag over #{max_lag} seconds"
+          if lag_failover
+            Thread.current[:distribute_reads] = {primary: true}
+          else
+            raise DistributeReads::TooMuchLag, "Replica lag over #{max_lag} seconds"
+          end
         end
 
         value = yield
