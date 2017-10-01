@@ -80,6 +80,8 @@ distribute_reads(max_lag: 3) do
 end
 ```
 
+**Note:** If you have multiple databases, this only checks lag on `ActiveRecord::Base` connection
+
 Don’t default to primary (default Makara behavior)
 
 ```ruby
