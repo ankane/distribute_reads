@@ -38,6 +38,17 @@ class TestJob < ActiveJob::Base
   end
 end
 
+class ReadWriteJob < ActiveJob::Base
+  def perform
+    $current_database = current_database
+    insert_value
+  end
+end
+
+def insert_value
+  User.create!(name: "Boom")
+end
+
 def current_database
   ActiveRecord::Base.connection.execute("SELECT current_database()").first["current_database"].split("_").last
 end

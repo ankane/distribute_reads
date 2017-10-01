@@ -1,4 +1,10 @@
-## 0.1.3 [unreleased]
+## 0.2.0 [unreleased]
+
+Breaking
+
+- Jobs default to replica when `default_to_primary` is false
+
+Other
 
 - Improved lag query
 - Added `failover` option

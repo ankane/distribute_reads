@@ -107,11 +107,19 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  private
+  def test_default_to_primary_false_active_job
+    DistributeReads.default_to_primary = false
 
-  def insert_value
-    User.create!(name: "Boom")
+    ReadWriteJob.perform_now
+    assert_equal "replica", $current_database
+
+    ReadWriteJob.perform_now
+    assert_equal "replica", $current_database
+  ensure
+    DistributeReads.default_to_primary = true
   end
+
+  private
 
   def assert_primary
     assert_equal "primary", current_database
