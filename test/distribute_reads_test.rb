@@ -69,10 +69,30 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_max_lag_failover
+  def test_lag_failover
     with_lag(2) do
       distribute_reads(max_lag: 1, lag_failover: true) do
         assert_primary
+      end
+    end
+  end
+
+  def test_lag_on
+    with_lag(2) do
+      assert_raises DistributeReads::TooMuchLag do
+        distribute_reads(max_lag: 1, lag_on: User) do
+          assert_replica
+        end
+      end
+    end
+  end
+
+  def test_lag_on_array
+    with_lag(2) do
+      assert_raises DistributeReads::TooMuchLag do
+        distribute_reads(max_lag: 1, lag_on: [User]) do
+          assert_replica
+        end
       end
     end
   end
@@ -129,7 +149,6 @@ class DistributeReadsTest < Minitest::Test
       end
     end
   end
-
 
   def test_missing_block
     error = assert_raises(ArgumentError) { distribute_reads }

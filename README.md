@@ -80,13 +80,19 @@ distribute_reads(max_lag: 3) do
 end
 ```
 
-**Note:** If you have multiple databases, this only checks lag on `ActiveRecord::Base` connection
+If you have multiple databases, this only checks lag on `ActiveRecord::Base` connection. Specify connections to check with [master]
+
+```ruby
+distribute_reads(max_lag: 3, lag_on: [ApplicationRecord, LogRecord]) do
+  # ...
+end
+```
 
 Use primary when replica lag is too high - *PostgreSQL only* [master]
 
 ```ruby
 distribute_reads(max_lag: 3, lag_failover: true) do
-  # code
+  # ...
 end
 ```
 
