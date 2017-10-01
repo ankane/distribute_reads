@@ -9,8 +9,14 @@ module DistributeReads
 
   class << self
     attr_accessor :default_to_primary
+    attr_accessor :default_options
   end
   self.default_to_primary = true
+  self.default_options = {
+    max_lag: nil,
+    failover: true,
+    lag_failover: false
+  }
 
   def self.lag
     conn = ActiveRecord::Base.connection

@@ -82,11 +82,6 @@ class DistributeReadsTest < Minitest::Test
     assert_equal "replica", $current_database
   end
 
-  def test_missing_block
-    error = assert_raises(ArgumentError) { distribute_reads }
-    assert_equal "Missing block", error.message
-  end
-
   def test_relation
     assert_output(nil, /\A\[distribute_reads\]/) do
       distribute_reads do
@@ -123,6 +118,29 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_default_options_max_lag
+    with_default_options(max_lag: 1) do
+      with_lag(2) do
+        assert_raises DistributeReads::TooMuchLag do
+          distribute_reads do
+            assert_replica
+          end
+        end
+      end
+    end
+  end
+
+
+  def test_missing_block
+    error = assert_raises(ArgumentError) { distribute_reads }
+    assert_equal "Missing block", error.message
+  end
+
+  def test_unknown_keywords
+    error = assert_raises(ArgumentError) { distribute_reads(hi: 1, bye: 2) {} }
+    assert_equal "Unknown keywords: hi, bye", error.message
+  end
+
   private
 
   def without_default_to_primary
@@ -130,6 +148,14 @@ class DistributeReadsTest < Minitest::Test
     yield
   ensure
     DistributeReads.default_to_primary = true
+  end
+
+  def with_default_options(options)
+    previous = DistributeReads.default_options
+    DistributeReads.default_options = options
+    yield
+  ensure
+    DistributeReads.default_options = previous
   end
 
   def with_replicas_blacklisted
