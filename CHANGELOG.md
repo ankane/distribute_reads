@@ -9,6 +9,7 @@ Other
 - Fixed `max_lag` option
 - Added `lag_failover` option
 - Added `failover` option
+- Added default options
 - Improved lag query
 
 ## 0.1.2
