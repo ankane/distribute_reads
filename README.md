@@ -72,6 +72,8 @@ end
 
 ## Options
 
+### Replica Lag
+
 Raise an error when replica lag is too high - *PostgreSQL only*
 
 ```ruby
@@ -88,7 +90,7 @@ distribute_reads(max_lag: 3, lag_on: [ApplicationRecord, LogRecord]) do
 end
 ```
 
-Use primary when replica lag is too high [master]
+Instead of raising an error, you can also use primary when replica lag is too high [master]
 
 ```ruby
 distribute_reads(max_lag: 3, lag_failover: true) do
@@ -96,13 +98,17 @@ distribute_reads(max_lag: 3, lag_failover: true) do
 end
 ```
 
-Raise an error when no replicas available (instead of using primary) [master]
+### Availability
+
+If no replicas are available, primary is used. To prevent this situation from overloading the primary, you can raise an error instead. [master]
 
 ```ruby
 distribute_reads(failover: false) do
   # raises DistributeReads::NoReplicasAvailable
 end
 ```
+
+### Default Options
 
 Change the defaults [master]
 
