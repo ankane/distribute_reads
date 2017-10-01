@@ -19,9 +19,12 @@ module DistributeReads
   }
 
   def self.lag(connection: nil)
+    raise "Don't use outside distribute_reads" unless Thread.current[:distribute_reads]
+
     connection ||= ActiveRecord::Base.connection
     if %w(PostgreSQL PostGIS).include?(connection.adapter_name)
-      if connection.instance_variable_get(:@slave_pool).connections.size > 1
+      replica_pool = connection.instance_variable_get(:@slave_pool)
+      if replica_pool && replica_pool.connections.size > 1
         warn "[distribute_reads] Multiple replicas available, lag only reported for one"
       end
 
