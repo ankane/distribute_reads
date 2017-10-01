@@ -6,6 +6,7 @@ Breaking
 
 Other
 
+- Fixed `max_lag` option
 - Improved lag query
 - Added `failover` option
 
