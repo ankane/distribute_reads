@@ -11,6 +11,7 @@ Other
 - Added `lag_failover` option
 - Added `failover` option
 - Added `lag_on` option
+- Added `primary` option
 - Added default options
 - Improved lag query
 

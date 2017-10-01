@@ -150,6 +150,14 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_distribute_reads_by_default_primary
+    by_default do
+      distribute_reads(primary: true) do
+        assert_primary
+      end
+    end
+  end
+
   def test_missing_block
     error = assert_raises(ArgumentError) { distribute_reads }
     assert_equal "Missing block", error.message

@@ -135,6 +135,14 @@ Once you do this, Makara will use the Rails cache to track its state. To reduce 
 Makara::Cache.store = DistributeReads::CacheStore.new
 ```
 
+To make queries go to primary, use: [master]
+
+```ruby
+distribute_reads(primary: true) do
+  # ...
+end
+```
+
 ## Thanks
 
 Thanks to [TaskRabbit](https://github.com/taskrabbit) for Makara and [Nick Elser](https://github.com/nickelser) for the write-through cache.
