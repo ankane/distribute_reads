@@ -15,6 +15,10 @@ module DistributeReads
   def self.lag
     conn = ActiveRecord::Base.connection
     if %w(PostgreSQL PostGIS).include?(conn.adapter_name)
+      if conn.instance_variable_get(:@slave_pool).connections.size > 1
+        warn "[distribute_reads] Multiple replicas available, lag only reported for one"
+      end
+
       conn.execute(
         "SELECT CASE
           WHEN NOT pg_is_in_recovery() OR pg_last_xlog_receive_location() = pg_last_xlog_replay_location() THEN 0
