@@ -89,6 +89,16 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_failover
+    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+      assert_raises DistributeReads::NoReplicasAvailable do
+        distribute_reads(failover: false) do
+          assert_replica
+        end
+      end
+    end
+  end
+
   private
 
   def insert_value

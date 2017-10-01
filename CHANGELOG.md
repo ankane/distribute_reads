@@ -1,6 +1,7 @@
 ## 0.1.3 [unreleased]
 
 - Improved lag query
+- Added `failover` option
 
 ## 0.1.2
 

@@ -5,6 +5,7 @@ require "distribute_reads/version"
 
 module DistributeReads
   class TooMuchLag < StandardError; end
+  class NoReplicasAvailable < StandardError; end
 
   class << self
     attr_accessor :default_to_primary
