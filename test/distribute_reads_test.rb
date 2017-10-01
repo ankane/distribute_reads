@@ -56,7 +56,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_max_lag
-    DistributeReads.stub(:lag, 2) do
+    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).connections.first.stub(:execute, [{"lag" => 2}]) do
       assert_raises DistributeReads::TooMuchLag do
         distribute_reads(max_lag: 1) do
           assert_replica
