@@ -14,7 +14,7 @@ module DistributeReads
 
         # TODO ensure same connection is used to test lag and execute queries
         max_lag = options[:max_lag]
-        if max_lag
+        if max_lag && !options[:primary]
           Array(options[:lag_on] || [ActiveRecord::Base]).each do |base_model|
             if DistributeReads.lag(connection: base_model.connection) > max_lag
               if options[:lag_failover]
