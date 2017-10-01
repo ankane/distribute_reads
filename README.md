@@ -82,6 +82,32 @@ end
 
 **Note:** If you have multiple databases, this only checks lag on `ActiveRecord::Base` connection
 
+Use primary when replica lag is too high - *PostgreSQL only* [master]
+
+```ruby
+distribute_reads(max_lag: 3, lag_failover: true) do
+  # code
+end
+```
+
+Raise an error when no replicas available (instead of using primary) [master]
+
+```ruby
+distribute_reads(failover: false) do
+  # raises DistributeReads::NoReplicasAvailable
+end
+```
+
+Change the defaults [master]
+
+```ruby
+DistributeReads.default_options = {
+  max_lag: nil,
+  lag_failover: false,
+  failover: true
+}
+```
+
 Don’t default to primary (default Makara behavior)
 
 ```ruby
