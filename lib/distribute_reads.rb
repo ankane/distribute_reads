@@ -10,10 +10,10 @@ module DistributeReads
   class NoReplicasAvailable < Error; end
 
   class << self
-    attr_accessor :default_to_primary
+    attr_accessor :by_default
     attr_accessor :default_options
   end
-  self.default_to_primary = true
+  self.by_default = false
   self.default_options = {
     failover: true,
     lag_failover: false
@@ -38,6 +38,16 @@ module DistributeReads
     else
       raise DistributeReads::Error, "Option not supported with this adapter"
     end
+  end
+
+  # legacy
+  def self.default_to_primary
+    !by_default
+  end
+
+  # legacy
+  def self.default_to_primary=(value)
+    self.by_default = !value
   end
 end
 

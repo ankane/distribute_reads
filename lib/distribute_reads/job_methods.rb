@@ -6,7 +6,7 @@ module DistributeReads
 
     included do
       before_perform do
-        Makara::Context.set_current(Makara::Context.generate) unless DistributeReads.default_to_primary
+        Makara::Context.set_current(Makara::Context.generate) if DistributeReads.by_default
       end
     end
 

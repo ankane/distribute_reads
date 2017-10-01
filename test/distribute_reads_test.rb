@@ -12,8 +12,8 @@ class DistributeReadsTest < Minitest::Test
     assert_cache_size 0
   end
 
-  def test_default_to_primary
-    without_default_to_primary do
+  def test_by_default
+    by_default do
       assert_replica
       insert_value
       assert_primary
@@ -32,8 +32,8 @@ class DistributeReadsTest < Minitest::Test
     assert_cache_size 0
   end
 
-  def test_distribute_reads_default_to_primary_false
-    without_default_to_primary do
+  def test_distribute_reads_by_default
+    by_default do
       distribute_reads do
         assert_replica
         insert_value
@@ -128,8 +128,8 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_default_to_primary_false_active_job
-    without_default_to_primary do
+  def test_by_default_active_job
+    by_default do
       ReadWriteJob.perform_now
       assert_equal "replica", $current_database
 
@@ -162,11 +162,11 @@ class DistributeReadsTest < Minitest::Test
 
   private
 
-  def without_default_to_primary
-    DistributeReads.default_to_primary = false
+  def by_default
+    DistributeReads.by_default = true
     yield
   ensure
-    DistributeReads.default_to_primary = true
+    DistributeReads.by_default = false
   end
 
   def with_default_options(options)

@@ -6,6 +6,7 @@ Breaking
 
 Other
 
+- Replaced `default_to_primary` with `by_default`
 - Fixed `max_lag` option
 - Added `lag_failover` option
 - Added `failover` option

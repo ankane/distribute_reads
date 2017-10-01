@@ -118,7 +118,7 @@ DistributeReads.default_options = {
 At some point, you may wish to distribute reads by default.
 
 ```ruby
-DistributeReads.default_to_primary = false
+DistributeReads.by_default = true
 ```
 
 Once you do this, Makara will use the Rails cache to track its state. To reduce load on the Rails cache, use a write-through cache in front of it. [master]
