@@ -5,6 +5,8 @@ require "minitest/pride"
 require "active_record"
 require "active_job"
 
+ActiveJob::Base.logger.level = :warn
+
 ActiveRecord::Base.establish_connection(
   adapter: "postgresql_makara",
   makara: {
