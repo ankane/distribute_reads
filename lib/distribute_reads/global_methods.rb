@@ -19,7 +19,7 @@ module DistributeReads
             if DistributeReads.lag(connection: base_model.connection) > max_lag
               if options[:lag_failover]
                 # TODO possibly per connection
-                Thread.current[:distribute_reads] = {primary: true}
+                Thread.current[:distribute_reads][:primary] = true
               else
                 raise DistributeReads::TooMuchLag, "Replica lag over #{max_lag} seconds"
               end
