@@ -5,8 +5,9 @@ require "distribute_reads/global_methods"
 require "distribute_reads/version"
 
 module DistributeReads
-  class TooMuchLag < StandardError; end
-  class NoReplicasAvailable < StandardError; end
+  class Error < StandardError; end
+  class TooMuchLag < Error; end
+  class NoReplicasAvailable < Error; end
 
   class << self
     attr_accessor :default_to_primary
@@ -19,7 +20,7 @@ module DistributeReads
   }
 
   def self.lag(connection: nil)
-    raise "Don't use outside distribute_reads" unless Thread.current[:distribute_reads]
+    raise DistributeReads::Error, "Don't use outside distribute_reads" unless Thread.current[:distribute_reads]
 
     connection ||= ActiveRecord::Base.connection
     if %w(PostgreSQL PostGIS).include?(connection.adapter_name)
@@ -35,7 +36,7 @@ module DistributeReads
         END AS lag"
       ).first["lag"].to_f
     else
-      raise "Option not supported with this adapter"
+      raise DistributeReads::Error, "Option not supported with this adapter"
     end
   end
 end
