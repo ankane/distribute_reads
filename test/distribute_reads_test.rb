@@ -13,13 +13,12 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_default_to_primary
-    DistributeReads.default_to_primary = false
-    assert_replica
-    insert_value
-    assert_primary
-    assert_cache_size 1
-  ensure
-    DistributeReads.default_to_primary = true
+    without_default_to_primary do
+      assert_replica
+      insert_value
+      assert_primary
+      assert_cache_size 1
+    end
   end
 
   def test_distribute_reads
@@ -34,16 +33,15 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_distribute_reads_default_to_primary_false
-    DistributeReads.default_to_primary = false
-    distribute_reads do
-      assert_replica
-      insert_value
-      assert_replica
+    without_default_to_primary do
+      distribute_reads do
+        assert_replica
+        insert_value
+        assert_replica
+      end
+      assert_primary
+      assert_cache_size 1
     end
-    assert_primary
-    assert_cache_size 1
-  ensure
-    DistributeReads.default_to_primary = true
   end
 
   def test_distribute_reads_transaction
@@ -116,18 +114,23 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_default_to_primary_false_active_job
-    DistributeReads.default_to_primary = false
+    without_default_to_primary do
+      ReadWriteJob.perform_now
+      assert_equal "replica", $current_database
 
-    ReadWriteJob.perform_now
-    assert_equal "replica", $current_database
-
-    ReadWriteJob.perform_now
-    assert_equal "replica", $current_database
-  ensure
-    DistributeReads.default_to_primary = true
+      ReadWriteJob.perform_now
+      assert_equal "replica", $current_database
+    end
   end
 
   private
+
+  def without_default_to_primary
+    DistributeReads.default_to_primary = false
+    yield
+  ensure
+    DistributeReads.default_to_primary = true
+  end
 
   def with_replicas_blacklisted
     ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
