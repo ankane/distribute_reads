@@ -70,6 +70,8 @@ class TestJob < ApplicationJob
 end
 ```
 
+You can pass any options as well.
+
 ## Options
 
 ### Replica Lag
