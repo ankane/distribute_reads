@@ -54,13 +54,14 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_max_lag
-    with_lag(2) do
-      assert_raises DistributeReads::TooMuchLag do
+    error = assert_raises DistributeReads::TooMuchLag do
+      with_lag(2) do
         distribute_reads(max_lag: 1) do
           assert_replica
         end
       end
     end
+    assert_equal "Replica lag over 1 seconds", error.message
   end
 
   def test_max_lag_under
@@ -78,23 +79,25 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_lag_on
-    with_lag(2) do
-      assert_raises DistributeReads::TooMuchLag do
+    error = assert_raises DistributeReads::TooMuchLag do
+      with_lag(2) do
         distribute_reads(max_lag: 1, lag_on: User) do
           assert_replica
         end
       end
     end
+    assert_equal "Replica lag over 1 seconds on User connection", error.message
   end
 
   def test_lag_on_array
-    with_lag(2) do
-      assert_raises DistributeReads::TooMuchLag do
+    error = assert_raises DistributeReads::TooMuchLag do
+      with_lag(2) do
         distribute_reads(max_lag: 1, lag_on: [User]) do
           assert_replica
         end
       end
     end
+    assert_equal "Replica lag over 1 seconds on User connection", error.message
   end
 
   def test_active_job
