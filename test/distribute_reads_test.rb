@@ -131,6 +131,28 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_by_default_failover_true
+    by_default do
+      with_replicas_blacklisted do
+        distribute_reads do
+          assert_primary
+        end
+      end
+    end
+  end
+
+  def test_by_default_failover_false
+    by_default do
+      with_replicas_blacklisted do
+        assert_raises DistributeReads::NoReplicasAvailable do
+          distribute_reads(failover: false) do
+            assert_replica
+          end
+        end
+      end
+    end
+  end
+
   def test_by_default_active_job
     by_default do
       ReadWriteJob.perform_now
