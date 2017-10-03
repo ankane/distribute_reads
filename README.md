@@ -84,7 +84,7 @@ distribute_reads(max_lag: 3) do
 end
 ```
 
-Instead of raising an error, you can also use primary [master]
+Instead of raising an error, you can also use primary
 
 ```ruby
 distribute_reads(max_lag: 3, lag_failover: true) do
@@ -92,7 +92,7 @@ distribute_reads(max_lag: 3, lag_failover: true) do
 end
 ```
 
-If you have multiple databases, this only checks lag on `ActiveRecord::Base` connection. Specify connections to check with [master]
+If you have multiple databases, this only checks lag on `ActiveRecord::Base` connection. Specify connections to check with
 
 ```ruby
 distribute_reads(max_lag: 3, lag_on: [ApplicationRecord, LogRecord]) do
@@ -104,7 +104,7 @@ end
 
 ### Availability
 
-If no replicas are available, primary is used. To prevent this situation from overloading the primary, you can raise an error instead. [master]
+If no replicas are available, primary is used. To prevent this situation from overloading the primary, you can raise an error instead.
 
 ```ruby
 distribute_reads(failover: false) do
@@ -114,7 +114,7 @@ end
 
 ### Default Options
 
-Change the defaults [master]
+Change the defaults
 
 ```ruby
 DistributeReads.default_options = {
@@ -131,13 +131,13 @@ At some point, you may wish to distribute reads by default.
 DistributeReads.by_default = true
 ```
 
-Once you do this, Makara will use the Rails cache to track its state. To reduce load on the Rails cache, use a write-through cache in front of it. [master]
+Once you do this, Makara will use the Rails cache to track its state. To reduce load on the Rails cache, use a write-through cache in front of it.
 
 ```ruby
 Makara::Cache.store = DistributeReads::CacheStore.new
 ```
 
-To make queries go to primary, use: [master]
+To make queries go to primary, use:
 
 ```ruby
 distribute_reads(primary: true) do
