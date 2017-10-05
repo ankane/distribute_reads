@@ -147,7 +147,7 @@ end
 
 ## Thanks
 
-Thanks to [TaskRabbit](https://github.com/taskrabbit) for Makara and [Nick Elser](https://github.com/nickelser) for the write-through cache.
+Thanks to [TaskRabbit](https://github.com/taskrabbit) for Makara, [Sherin Kurian](https://github.com/sherinkurian) for the max lag option, and [Nick Elser](https://github.com/nickelser) for the write-through cache.
 
 ## History
 
