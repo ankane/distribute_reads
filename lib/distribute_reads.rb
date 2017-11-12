@@ -29,11 +29,13 @@ module DistributeReads
         warn "[distribute_reads] Multiple replicas available, lag only reported for one"
       end
 
+      # cache the version number
       @server_version_num ||= {}
-      @server_version_num[connection] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
+      cache_key = connection.config
+      @server_version_num[cache_key] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
 
       lag_condition =
-        if @server_version_num[connection] >= 100000
+        if @server_version_num[cache_key] >= 100000
           "pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn()"
         else
           "pg_last_xlog_receive_location() = pg_last_xlog_replay_location()"
