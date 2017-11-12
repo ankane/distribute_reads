@@ -43,7 +43,7 @@ module DistributeReads
         "SELECT CASE
           WHEN NOT pg_is_in_recovery() OR #{lag_condition} THEN 0
           ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
-        END AS lag"
+        END AS lag".squish
       ).first["lag"].to_f
     else
       raise DistributeReads::Error, "Option not supported with this adapter"

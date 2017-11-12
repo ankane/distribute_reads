@@ -7,6 +7,9 @@ require "active_job"
 
 ActiveJob::Base.logger.level = :warn
 
+# to debug
+# ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
+
 ActiveRecord::Base.establish_connection(
   adapter: "postgresql_makara",
   makara: {
