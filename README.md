@@ -161,3 +161,14 @@ Everyone is encouraged to help improve this project. Here are a few ways you can
 - Fix bugs and [submit pull requests](https://github.com/ankane/distribute_reads/pulls)
 - Write, clarify, or fix documentation
 - Suggest or add new features
+
+To test, run:
+
+```sh
+git clone https://github.com/ankane/distribute_reads.git
+cd distribute_reads
+createdb distribute_reads_test_primary
+createdb distribute_reads_test_replica
+bundle
+bundle exec rake
+```
