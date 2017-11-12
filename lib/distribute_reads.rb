@@ -29,9 +29,19 @@ module DistributeReads
         warn "[distribute_reads] Multiple replicas available, lag only reported for one"
       end
 
+      @server_version_num ||= {}
+      @server_version_num[connection] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
+
+      lag_condition =
+        if @server_version_num[connection] >= 100000
+          "pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn()"
+        else
+          "pg_last_xlog_receive_location() = pg_last_xlog_replay_location()"
+        end
+
       connection.execute(
         "SELECT CASE
-          WHEN NOT pg_is_in_recovery() OR pg_last_xlog_receive_location() = pg_last_xlog_replay_location() THEN 0
+          WHEN NOT pg_is_in_recovery() OR #{lag_condition} THEN 0
           ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
         END AS lag"
       ).first["lag"].to_f

@@ -1,3 +1,7 @@
+## 0.2.1 [unreleased]
+
+- Fixed lag check for Postgres 10
+
 ## 0.2.0
 
 Breaking
