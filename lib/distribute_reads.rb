@@ -37,7 +37,7 @@ module DistributeReads
 
       # cache the version number
       @server_version_num ||= {}
-      cache_key = connection.config
+      cache_key = connection.pool.object_id
       @server_version_num[cache_key] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
 
       lag_condition =
