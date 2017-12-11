@@ -19,6 +19,12 @@ module DistributeReads
     lag_failover: false
   }
 
+  def self.replication_lag(connection: nil)
+    distribute_reads do
+      lag(connection: connection)
+    end
+  end
+
   def self.lag(connection: nil)
     raise DistributeReads::Error, "Don't use outside distribute_reads" unless Thread.current[:distribute_reads]
 

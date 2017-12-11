@@ -193,6 +193,12 @@ class DistributeReadsTest < Minitest::Test
     assert_equal "Unknown keywords: hi, bye", error.message
   end
 
+  def test_replication_lag
+    with_lag(2) do
+      assert_equal 2, DistributeReads.replication_lag
+    end
+  end
+
   private
 
   def by_default
