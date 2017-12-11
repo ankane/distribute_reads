@@ -8,7 +8,9 @@ require "active_job"
 ActiveJob::Base.logger.level = :warn
 
 # to debug
-# ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
+if ENV["VERBOSE"]
+  ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
+end
 
 ActiveRecord::Base.establish_connection(
   adapter: "postgresql_makara",
