@@ -147,7 +147,7 @@ end
 
 ## Reference
 
-Get replication lag [master]
+Get replication lag
 
 ```ruby
 DistributeReads.replication_lag

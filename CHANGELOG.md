@@ -1,4 +1,4 @@
-## 0.2.1 [unreleased]
+## 0.2.1
 
 - Fixed lag check for Postgres 10
 - Added `replication_lag` method
