@@ -1,4 +1,5 @@
 require "makara"
+require 'active_record/connection_adapters/makara_abstract_adapter'
 require "distribute_reads/appropriate_pool"
 require "distribute_reads/cache_store"
 require "distribute_reads/global_methods"
@@ -70,6 +71,7 @@ module DistributeReads
 end
 
 Makara::Proxy.send :prepend, DistributeReads::AppropriatePool
+ActiveRecord::ConnectionAdapters::MakaraAbstractAdapter.send :hijack_method, :select_value
 Object.send :include, DistributeReads::GlobalMethods
 
 ActiveSupport.on_load(:active_job) do
