@@ -29,12 +29,13 @@ module DistributeReads
     raise DistributeReads::Error, "Don't use outside distribute_reads" unless Thread.current[:distribute_reads]
 
     connection ||= ActiveRecord::Base.connection
-    if %w(PostgreSQL PostGIS).include?(connection.adapter_name)
-      replica_pool = connection.instance_variable_get(:@slave_pool)
-      if replica_pool && replica_pool.connections.size > 1
-        warn "[distribute_reads] Multiple replicas available, lag only reported for one"
-      end
 
+    replica_pool = connection.instance_variable_get(:@slave_pool)
+    if replica_pool && replica_pool.connections.size > 1
+      warn "[distribute_reads] Multiple replicas available, lag only reported for one"
+    end
+
+    if %w(PostgreSQL PostGIS).include?(connection.adapter_name)
       # cache the version number
       @server_version_num ||= {}
       cache_key = connection.pool.object_id
