@@ -214,6 +214,24 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_replica_failover_true
+    with_replicas_blacklisted do
+      distribute_reads(replica: true) do
+        assert_primary
+      end
+    end
+  end
+
+  def test_replica_failover_false
+    with_replicas_blacklisted do
+      assert_raises DistributeReads::NoReplicasAvailable do
+        distribute_reads(replica: true, failover: false) do
+          assert_replica
+        end
+      end
+    end
+  end
+
   private
 
   def by_default
