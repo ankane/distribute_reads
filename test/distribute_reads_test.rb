@@ -207,9 +207,9 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_replica
+  def test_needs_primary
     assert_primary prefix: "/*hi*/"
-    distribute_reads(replica: true) do
+    distribute_reads(needs_primary: false) do
       assert_replica prefix: "/*hi*/"
     end
   end

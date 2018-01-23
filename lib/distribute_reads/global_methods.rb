@@ -3,17 +3,18 @@ module DistributeReads
     def distribute_reads(**options)
       raise ArgumentError, "Missing block" unless block_given?
 
-      unknown_keywords = options.keys - [:failover, :lag_failover, :lag_on, :max_lag, :primary, :replica]
+      unknown_keywords = options.keys - [:failover, :lag_failover, :lag_on, :max_lag, :primary, :needs_primary]
       raise ArgumentError, "Unknown keywords: #{unknown_keywords.join(", ")}" if unknown_keywords.any?
 
       options = DistributeReads.default_options.merge(options)
 
       previous_value = Thread.current[:distribute_reads]
       begin
+        needs_primary = options[:needs_primary]
+        needs_primary = true if needs_primary.nil? && options[:primary]
         Thread.current[:distribute_reads] = {
           failover: options[:failover],
-          primary: options[:primary],
-          replica: options[:replica]
+          needs_primary: needs_primary
         }
 
         # TODO ensure same connection is used to test lag and execute queries
@@ -23,7 +24,7 @@ module DistributeReads
             if DistributeReads.lag(connection: base_model.connection) > max_lag
               if options[:lag_failover]
                 # TODO possibly per connection
-                Thread.current[:distribute_reads][:primary] = true
+                Thread.current[:distribute_reads][:needs_primary] = true
               else
                 raise DistributeReads::TooMuchLag, "Replica lag over #{max_lag} seconds#{options[:lag_on] ? " on #{base_model.name} connection" : ""}"
               end

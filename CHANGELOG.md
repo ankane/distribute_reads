@@ -1,7 +1,7 @@
 ## 0.2.2 [unreleased]
 
 - Added support for MySQL replication lag
-- Added `replica` option
+- Added `needs_primary` option
 
 ## 0.2.1
 

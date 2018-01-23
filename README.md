@@ -140,7 +140,7 @@ Makara::Cache.store = DistributeReads::CacheStore.new
 To make queries go to primary, use:
 
 ```ruby
-distribute_reads(primary: true) do
+distribute_reads(needs_primary: true) do
   # ...
 end
 ```
@@ -156,7 +156,7 @@ DistributeReads.replication_lag
 Certain complex queries may always go to primary instead of replicas. To override this, use: [master]
 
 ```ruby
-distribute_reads(replica: true) do
+distribute_reads(needs_primary: false) do
   # ...
 end
 ```
