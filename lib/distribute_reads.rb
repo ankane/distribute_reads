@@ -53,6 +53,17 @@ module DistributeReads
           ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
         END AS lag".squish
       ).first["lag"].to_f
+    elsif %w(MySQL Mysql2 Mysql2Spatial Mysql2Rgeo).include?(connection.adapter_name)
+      status = nil
+      replica_value = Thread.current[:distribute_reads][:replica]
+      begin
+        # makara doesn't send SHOW queries to replica, so we must force it
+        Thread.current[:distribute_reads][:replica] = true
+        status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
+      ensure
+        Thread.current[:distribute_reads][:replica] = replica_value
+      end
+      status ? status["Seconds_Behind_Master"].to_f : 0.0
     else
       raise DistributeReads::Error, "Option not supported with this adapter"
     end

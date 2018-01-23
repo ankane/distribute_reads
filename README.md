@@ -76,7 +76,7 @@ You can pass any options as well.
 
 ### Replica Lag
 
-Raise an error when replica lag is too high - *PostgreSQL only*
+Raise an error when replica lag is too high
 
 ```ruby
 distribute_reads(max_lag: 3) do

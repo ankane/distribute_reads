@@ -73,7 +73,6 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_max_lag_under_not_stubbed
-    skip if adapter == "mysql2"
     distribute_reads(max_lag: 1) do
       assert_replica
     end
@@ -239,13 +238,8 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def with_lag(lag)
-    if adapter == "mysql2"
-      assert_raises(DistributeReads::Error) { yield }
-      skip
-    else
-      DistributeReads.stub(:lag, lag) do
-        yield
-      end
+    DistributeReads.stub(:lag, lag) do
+      yield
     end
   end
 

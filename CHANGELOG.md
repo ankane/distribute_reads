@@ -1,5 +1,6 @@
 ## 0.2.2 [unreleased]
 
+- Added support for MySQL replication lag
 - Added `replica` option
 
 ## 0.2.1
