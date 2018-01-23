@@ -10,7 +10,11 @@ module DistributeReads
 
       previous_value = Thread.current[:distribute_reads]
       begin
-        Thread.current[:distribute_reads] = {failover: options[:failover], primary: options[:primary], replica: options[:replica]}
+        Thread.current[:distribute_reads] = {
+          failover: options[:failover],
+          primary: options[:primary],
+          replica: options[:replica]
+        }
 
         # TODO ensure same connection is used to test lag and execute queries
         max_lag = options[:max_lag]

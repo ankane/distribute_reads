@@ -1,6 +1,6 @@
 ## 0.2.2 [unreleased]
 
-- Added `replica` option to make queries go to replica even if they appear to need master
+- Added `replica` option
 
 ## 0.2.1
 
