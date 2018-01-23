@@ -208,6 +208,13 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_replica
+    assert_primary prefix: "/*hi*/"
+    distribute_reads(replica: true) do
+      assert_replica prefix: "/*hi*/"
+    end
+  end
+
   private
 
   def by_default
@@ -242,12 +249,12 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def assert_primary
-    assert_equal "primary", current_database
+  def assert_primary(prefix: nil)
+    assert_equal "primary", current_database(prefix: prefix)
   end
 
-  def assert_replica
-    assert_equal "replica", current_database
+  def assert_replica(prefix: nil)
+    assert_equal "replica", current_database(prefix: prefix)
   end
 
   def assert_cache_size(value)

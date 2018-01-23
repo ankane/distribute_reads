@@ -1,3 +1,7 @@
+## 0.2.2 [unreleased]
+
+- Added `replica` option to make queries go to replica even if they appear to need master
+
 ## 0.2.1
 
 - Fixed lag check for Postgres 10
