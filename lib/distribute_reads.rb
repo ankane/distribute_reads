@@ -20,7 +20,7 @@ module DistributeReads
   }
 
   def self.replication_lag(connection: nil)
-    distribute_reads(failover: false) do
+    distribute_reads(replica: true) do
       lag(connection: connection)
     end
   end
