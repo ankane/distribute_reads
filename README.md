@@ -153,14 +153,6 @@ Get replication lag
 DistributeReads.replication_lag
 ```
 
-Certain complex queries may always go to primary instead of replicas. To override this, use: [master]
-
-```ruby
-distribute_reads(replica: true) do
-  # ...
-end
-```
-
 ## Thanks
 
 Thanks to [TaskRabbit](https://github.com/taskrabbit) for Makara, [Sherin Kurian](https://github.com/sherinkurian) for the max lag option, and [Nick Elser](https://github.com/nickelser) for the write-through cache.
