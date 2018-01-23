@@ -223,7 +223,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def with_lag(lag)
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).connections.first.stub(:execute, [{"lag" => lag}]) do
+    DistributeReads.stub(:lag, lag) do
       yield
     end
   end
