@@ -146,7 +146,6 @@ end
 Get replication lag in seconds
 
 ```ruby
-# returns the replication_lag in seconds
 DistributeReads.replication_lag
 ```
 

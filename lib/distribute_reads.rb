@@ -2,6 +2,7 @@ require "makara"
 require "distribute_reads/appropriate_pool"
 require "distribute_reads/cache_store"
 require "distribute_reads/global_methods"
+require "distribute_reads/mysql_replication_lag_reporter"
 require "distribute_reads/version"
 
 module DistributeReads
@@ -56,22 +57,14 @@ module DistributeReads
       ).first["lag"].to_f
     elsif %w(MySQL Mysql2 Mysql2Spatial Mysql2Rgeo).include?(connection.adapter_name)
       replica_value = Thread.current[:distribute_reads][:replica]
+
       begin
         # makara doesn't send SHOW queries to replica, so we must force it
         Thread.current[:distribute_reads][:replica] = true
-
-        unless @using_aws_aurora
-          status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
-          return status["Seconds_Behind_Master"].to_f if status
-        end
-
-        # If SHOW SLAVE STATUS returns the empty set, check if using AWS Aurora
-        # Aurora MySQL does not use MySQL Binary Log File Position Based Replication method for its replication,
-        # which is why the SHOW SLAVE STATUS command does not show any information.
-        @using_aws_aurora ||= connection.exec_query("SHOW TABLES FROM mysql LIKE 'ro_replica_status'").to_hash.first
-        return 0.0 unless @using_aws_aurora
-        status = connection.exec_query("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status").to_hash.first
-        status ? status["Replica_lag_in_msec"] / 1000.0 : 0.0
+        @mysql_replica_cache ||= {}
+        cache_key = connection.object_id
+        @mysql_replica_cache[cache_key] ||= MysqlReplicationLagReporter.new(connection)
+        @mysql_replica_cache[cache_key].lag
       ensure
         Thread.current[:distribute_reads][:replica] = replica_value
       end
