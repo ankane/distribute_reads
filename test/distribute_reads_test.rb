@@ -3,8 +3,12 @@ require_relative "test_helper"
 class DistributeReadsTest < Minitest::Test
   def setup
     # reset context
-    Makara::Cache.store = :memory
-    Makara::Context.set_current(Makara::Context.generate)
+    if DistributeReads.makara3?
+      Makara::Cache.store = :memory
+      Makara::Context.set_current(Makara::Context.generate)
+    else
+      Makara::Context.release_all
+    end
   end
 
   def test_default
@@ -270,6 +274,10 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def assert_cache_size(value)
-    assert_equal value, Makara::Cache.send(:store).instance_variable_get(:@data).size
+    if DistributeReads.makara3?
+      assert_equal value, Makara::Cache.send(:store).instance_variable_get(:@data).size
+    else
+      assert_equal value, Makara::Context.send(:current).staged_data.size
+    end
   end
 end

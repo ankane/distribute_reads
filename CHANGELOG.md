@@ -1,3 +1,7 @@
+## 0.2.3 [unreleased]
+
+- Added support for Makara 0.4
+
 ## 0.2.2
 
 - Added support for MySQL replication lag

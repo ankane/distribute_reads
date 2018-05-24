@@ -1,6 +1,6 @@
 sudo: false
 language: ruby
-rvm: 2.4.1
+rvm: 2.5.1
 script: bundle exec rake test
 before_script:
   - psql -c 'create database distribute_reads_test_primary;' -U postgres
@@ -11,3 +11,4 @@ notifications:
     on_failure: change
 gemfile:
   - Gemfile
+  - test/gemfiles/makara3.gemfile
