@@ -1,5 +1,6 @@
 require "makara"
 require "distribute_reads/appropriate_pool"
+require "distribute_reads/cache_store"
 require "distribute_reads/global_methods"
 require "distribute_reads/version"
 
