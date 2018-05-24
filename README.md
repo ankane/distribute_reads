@@ -76,7 +76,7 @@ You can pass any options as well.
 
 ### Replica Lag
 
-Raise an error when replica lag is too high
+Raise an error when replica lag is too high (specified in seconds)
 
 ```ruby
 distribute_reads(max_lag: 3) do
@@ -141,7 +141,7 @@ end
 
 ## Reference
 
-Get replication lag
+Get replication lag in seconds
 
 ```ruby
 DistributeReads.replication_lag
