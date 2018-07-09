@@ -59,8 +59,21 @@ module DistributeReads
       begin
         # makara doesn't send SHOW queries to replica, so we must force it
         Thread.current[:distribute_reads][:replica] = true
-        status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
-        status ? status["Seconds_Behind_Master"].to_f : 0.0
+
+        @aurora_mysql ||= {}
+        cache_key = connection.pool.object_id
+
+        unless @aurora_mysql.key?(cache_key)
+          @aurora_mysql[cache_key] = connection.exec_query("SHOW VARIABLES LIKE 'aurora_version'").to_hash.any?
+        end
+
+        if @aurora_mysql[cache_key]
+          status = connection.exec_query("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status").to_hash.first
+          status ? status["Replica_lag_in_msec"] / 1000.0 : 0.0
+        else
+          status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
+          status ? status["Seconds_Behind_Master"].to_f : 0.0
+        end
       ensure
         Thread.current[:distribute_reads][:replica] = replica_value
       end
