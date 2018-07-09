@@ -68,7 +68,7 @@ module DistributeReads
         end
 
         if @aurora_mysql[cache_key]
-          status = connection.exec_query("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status").to_hash.first
+          status = connection.exec_query("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status WHERE Server_id = @@aurora_server_id").to_hash.first
           status ? status["Replica_lag_in_msec"] / 1000.0 : 0.0
         else
           status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first

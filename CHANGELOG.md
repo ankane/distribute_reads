@@ -1,3 +1,7 @@
+## 0.2.4 [unreleased]
+
+- Added support for Aurora MySQL replication lag
+
 ## 0.2.3
 
 - Added support for Makara 0.4
