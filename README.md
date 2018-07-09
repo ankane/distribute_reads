@@ -100,9 +100,7 @@ distribute_reads(max_lag: 3, lag_on: [ApplicationRecord, LogRecord]) do
 end
 ```
 
-**Note:**
-* If lag on any connection exceeds the max lag and lag failover is used, *all connections* will use their primary.
-* `max_lag` is given in seconds.
+**Note:** If lag on any connection exceeds the max lag and lag failover is used, *all connections* will use their primary.
 
 ### Availability
 
