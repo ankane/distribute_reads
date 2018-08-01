@@ -44,7 +44,6 @@ By default, all reads go to the primary instance. To use the replica, do:
 ```ruby
 distribute_reads { User.count }
 ```
-**Note:** ActiveRecord Lazy loading might delay the execution of the query outside of the distribute_reads block. in such case the primary database will be used
 
 Works with multiple queries as well.
 
@@ -72,6 +71,20 @@ end
 ```
 
 You can pass any options as well.
+
+## Lazy Evaluation
+
+ActiveRecord uses [lazy evaluation](https://www.theodinproject.com/courses/ruby-on-rails/lessons/active-record-queries), which can delay the execution of a query to outside of a `distribute_reads` block. In this case, the primary will be used.
+
+```ruby
+users = distribute_reads { User.where(orders_count: 1) } # not executed yet
+```
+
+Call `to_a` inside the block ensure the query runs on a replica.
+
+```ruby
+users = distribute_reads { User.where(orders_count: 1).to_a }
+```
 
 ## Options
 
