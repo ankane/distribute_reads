@@ -18,7 +18,7 @@ module DistributeReads
 
     class_methods do
       def distribute_reads(*args)
-        around_perform do |job, block|
+        around_perform do |_job, block|
           distribute_reads(*args) { block.call }
         end
       end
