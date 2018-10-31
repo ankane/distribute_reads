@@ -5,7 +5,7 @@ require "minitest/pride"
 require "active_record"
 require "active_job"
 
-ActiveJob::Base.logger.level = :warn
+ActiveJob::Base.logger.level = 1
 
 # to debug
 if ENV["VERBOSE"]
