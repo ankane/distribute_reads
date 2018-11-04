@@ -133,7 +133,8 @@ Change the defaults
 ```ruby
 DistributeReads.default_options = {
   lag_failover: true,
-  failover: false
+  failover: false,
+  log_failover: false
 }
 ```
 

@@ -16,7 +16,8 @@ module DistributeReads
   self.by_default = false
   self.default_options = {
     failover: true,
-    lag_failover: false
+    lag_failover: false,
+    log_failover: false
   }
 
   def self.replication_lag(connection: nil)
