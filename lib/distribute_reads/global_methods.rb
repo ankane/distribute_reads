@@ -21,20 +21,23 @@ module DistributeReads
         if max_lag && !options[:primary]
           Array(options[:lag_on] || [ActiveRecord::Base]).each do |base_model|
             if DistributeReads.lag(connection: base_model.connection) > max_lag
+              message = "Replica lag over #{max_lag} seconds#{options[:lag_on] ? " on #{base_model.name} connection" : ""}"
+
               if options[:lag_failover]
                 # TODO possibly per connection
                 Thread.current[:distribute_reads][:primary] = true
                 Thread.current[:distribute_reads][:replica] = false
+                DistributeReads.log "#{message}. Falling back to master pool."
                 break
               else
-                raise DistributeReads::TooMuchLag, "Replica lag over #{max_lag} seconds#{options[:lag_on] ? " on #{base_model.name} connection" : ""}"
+                raise DistributeReads::TooMuchLag, message
               end
             end
           end
         end
 
         value = yield
-        warn "[distribute_reads] Call `to_a` inside block to execute query on replica" if value.is_a?(ActiveRecord::Relation) && !previous_value
+        DistributeReads.log "Call `to_a` inside block to execute query on replica" if value.is_a?(ActiveRecord::Relation) && !previous_value
         value
       ensure
         Thread.current[:distribute_reads] = previous_value

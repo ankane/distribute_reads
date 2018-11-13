@@ -32,7 +32,7 @@ module DistributeReads
 
     replica_pool = connection.instance_variable_get(:@slave_pool)
     if replica_pool && replica_pool.connections.size > 1
-      warn "[distribute_reads] Multiple replicas available, lag only reported for one"
+      log "Multiple replicas available, lag only reported for one"
     end
 
     if %w(PostgreSQL PostGIS).include?(connection.adapter_name)
@@ -80,6 +80,10 @@ module DistributeReads
     else
       raise DistributeReads::Error, "Option not supported with this adapter"
     end
+  end
+
+  def self.log(message)
+    warn "[distribute_reads] #{message}"
   end
 
   # private
