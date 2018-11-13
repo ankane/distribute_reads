@@ -9,7 +9,12 @@ ActiveJob::Base.logger.level = Logger::WARN
 
 # to debug
 if ENV["VERBOSE"]
-  ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
+  logger = ActiveSupport::Logger.new(STDOUT)
+  ActiveRecord::Base.logger = logger
+  # Makara::Logging::Logger.logger = logger
+  ActiveRecord::LogSubscriber.log_subscribers.each do |subscriber|
+    subscriber.extend ::Makara::Logging::Subscriber
+  end
 end
 
 def adapter
