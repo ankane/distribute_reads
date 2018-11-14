@@ -1,6 +1,7 @@
-## 0.2.4 [unreleased]
+## 0.2.4
 
 - Added support for Aurora MySQL replication lag
+- Added more logging
 
 ## 0.2.3
 
