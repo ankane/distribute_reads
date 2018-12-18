@@ -4,6 +4,8 @@ rvm: 2.5.3
 gemfile:
   - Gemfile
   - test/gemfiles/makara3.gemfile
+services:
+  - postgresql
 script: bundle exec rake test
 before_script:
   - psql -c 'create database distribute_reads_test_primary;' -U postgres
