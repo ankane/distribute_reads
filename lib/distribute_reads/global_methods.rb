@@ -3,7 +3,7 @@ module DistributeReads
     def distribute_reads(**options)
       raise ArgumentError, "Missing block" unless block_given?
 
-      unknown_keywords = options.keys - [:failover, :lag_failover, :lag_on, :max_lag, :primary, :replica]
+      unknown_keywords = options.keys - [:failover, :lag_failover, :lag_on, :max_lag, :primary, :replica, :logging]
       raise ArgumentError, "Unknown keywords: #{unknown_keywords.join(", ")}" if unknown_keywords.any?
 
       options = DistributeReads.default_options.merge(options)

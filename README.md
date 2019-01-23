@@ -126,6 +126,16 @@ distribute_reads(failover: false) do
 end
 ```
 
+### Non-critical Logging
+
+Logging is enabled by default. To turn off non-critical logging, you can pass it as a param.
+
+```ruby
+distribute_reads(logging: false) do
+  # ...
+end
+```
+
 ### Default Options
 
 Change the defaults
@@ -133,7 +143,8 @@ Change the defaults
 ```ruby
 DistributeReads.default_options = {
   lag_failover: true,
-  failover: false
+  failover: false,
+  logging: true
 }
 ```
 
