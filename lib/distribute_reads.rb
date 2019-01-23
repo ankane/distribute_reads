@@ -16,7 +16,8 @@ module DistributeReads
   self.by_default = false
   self.default_options = {
     failover: true,
-    lag_failover: false
+    lag_failover: false,
+    logging: true
   }
 
   def self.replication_lag(connection: nil)
@@ -83,6 +84,7 @@ module DistributeReads
   end
 
   def self.log(message)
+    return unless Thread.current[:distribute_reads][:logging]
     warn "[distribute_reads] #{message}"
   end
 

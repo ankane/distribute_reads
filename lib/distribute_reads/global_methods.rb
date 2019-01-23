@@ -13,7 +13,8 @@ module DistributeReads
         Thread.current[:distribute_reads] = {
           failover: options[:failover],
           primary: options[:primary],
-          replica: options[:replica]
+          replica: options[:replica],
+          logging: options[:logging]
         }
 
         # TODO ensure same connection is used to test lag and execute queries
