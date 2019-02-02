@@ -1,4 +1,5 @@
 require_relative "test_helper"
+require 'logger'
 
 class DistributeReadsTest < Minitest::Test
   def setup
@@ -9,6 +10,8 @@ class DistributeReadsTest < Minitest::Test
     else
       Makara::Context.release_all
     end
+    @r, @w = IO.pipe
+    DistributeReads.logger = Logger.new(@w)
   end
 
   def test_default
@@ -118,11 +121,10 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_relation
-    assert_output(nil, /\A\[distribute_reads\]/) do
-      distribute_reads do
-        User.all
-      end
+    distribute_reads do
+      User.all
     end
+    assert_match 'WARN -- : [distribute_reads] Call `to_a` inside block to execute query on replica', @r.gets
   end
 
   def test_failover_true

@@ -3,6 +3,7 @@ require "distribute_reads/appropriate_pool"
 require "distribute_reads/cache_store"
 require "distribute_reads/global_methods"
 require "distribute_reads/version"
+require "logger"
 
 module DistributeReads
   class Error < StandardError; end
@@ -12,12 +13,15 @@ module DistributeReads
   class << self
     attr_accessor :by_default
     attr_accessor :default_options
+    attr_accessor :logger
   end
   self.by_default = false
   self.default_options = {
     failover: true,
     lag_failover: false
   }
+  self.logger = Logger.new(STDOUT)
+
 
   def self.replication_lag(connection: nil)
     distribute_reads do
@@ -82,8 +86,8 @@ module DistributeReads
     end
   end
 
-  def self.log(message)
-    warn "[distribute_reads] #{message}"
+  def self.log(message, level=:warn)
+    @logger.send(level, "[distribute_reads] #{message}") if @logger
   end
 
   # private

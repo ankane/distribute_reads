@@ -137,6 +137,22 @@ DistributeReads.default_options = {
 }
 ```
 
+### Logging
+
+Logging is enabled by default, with [Logger](https://ruby-doc.org/stdlib-2.4.0/libdoc/logger/rdoc/Logger.html) being the default logging utility.
+
+To disable logging, set:
+```ruby
+DistributeReads.logger=nil
+```
+
+To use a logger of your own choice (eg: `Log4R`), set:
+
+```ruby
+DistributeReads.logger=<some logger>
+```
+
+
 ## Distribute Reads by Default
 
 At some point, you may wish to distribute reads by default.
