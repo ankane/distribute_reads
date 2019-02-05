@@ -1,3 +1,7 @@
+## 0.3.0 [unreleased]
+
+- Use logger instead of stderr
+
 ## 0.2.4
 
 - Added support for Aurora MySQL replication lag

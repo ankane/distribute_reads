@@ -118,7 +118,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_relation
-    assert_output(nil, /\A\[distribute_reads\]/) do
+    assert_log "Call `to_a` inside block to execute query on replica" do
       distribute_reads do
         User.all
       end
@@ -263,6 +263,18 @@ class DistributeReadsTest < Minitest::Test
     DistributeReads.stub(:lag, lag) do
       yield
     end
+  end
+
+  def assert_log(message)
+    io = StringIO.new
+    previous_logger = DistributeReads.logger
+    begin
+      DistributeReads.logger = Logger.new(io)
+      yield
+    ensure
+      DistributeReads.logger = previous_logger
+    end
+    assert_includes io.string, "[distribute_reads] #{message}"
   end
 
   def assert_primary(prefix: nil)

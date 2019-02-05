@@ -12,12 +12,20 @@ module DistributeReads
   class << self
     attr_accessor :by_default
     attr_accessor :default_options
+    attr_writer :logger
   end
   self.by_default = false
   self.default_options = {
     failover: true,
     lag_failover: false
   }
+
+  def self.logger
+    unless defined?(@logger)
+      @logger = ActiveRecord::Base.logger
+    end
+    @logger
+  end
 
   def self.replication_lag(connection: nil)
     distribute_reads do
@@ -83,7 +91,7 @@ module DistributeReads
   end
 
   def self.log(message)
-    warn "[distribute_reads] #{message}"
+    logger.info("[distribute_reads] #{message}") if logger
   end
 
   # private

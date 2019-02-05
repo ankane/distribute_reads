@@ -137,6 +137,16 @@ DistributeReads.default_options = {
 }
 ```
 
+### Logging
+
+Messages about failover are logged to the Active Record logger by default. Set a different logger with:
+
+```ruby
+DistributeReads.logger = Logger.new(STDERR)
+```
+
+Or use `nil` to disable logging.
+
 ## Distribute Reads by Default
 
 At some point, you may wish to distribute reads by default.
