@@ -12,9 +12,6 @@ if ENV["VERBOSE"]
   logger = ActiveSupport::Logger.new(STDOUT)
   ActiveRecord::Base.logger = logger
   # Makara::Logging::Logger.logger = logger
-  ActiveRecord::LogSubscriber.log_subscribers.each do |subscriber|
-    subscriber.extend ::Makara::Logging::Subscriber
-  end
 end
 
 def adapter
