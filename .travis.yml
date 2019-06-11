@@ -1,8 +1,9 @@
 dist: xenial
 language: ruby
-rvm: 2.5.3
+rvm: 2.6.3
 gemfile:
   - Gemfile
+  - test/gemfiles/activerecord52.gemfile
   - test/gemfiles/makara3.gemfile
 services:
   - postgresql
