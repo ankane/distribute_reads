@@ -171,6 +171,18 @@ Get replication lag in seconds
 DistributeReads.replication_lag
 ```
 
+## Rails 6
+
+Rails 6 has [native support for replicas](https://edgeguides.rubyonrails.org/active_record_multiple_databases.html) :tada:
+
+```ruby
+ActiveRecord::Base.connected_to(role: :reading) do
+  # do reads
+end
+```
+
+However, it’s not able to automatically route queries like Makara just yet.
+
 ## Thanks
 
 Thanks to [TaskRabbit](https://github.com/taskrabbit) for Makara, [Sherin Kurian](https://github.com/sherinkurian) for the max lag option, and [Nick Elser](https://github.com/nickelser) for the write-through cache.
