@@ -1,4 +1,8 @@
+# dependencies
+require "active_support"
 require "makara"
+
+# modules
 require "distribute_reads/appropriate_pool"
 require "distribute_reads/cache_store"
 require "distribute_reads/global_methods"
