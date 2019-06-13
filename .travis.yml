@@ -9,8 +9,8 @@ services:
   - postgresql
 script: bundle exec rake test
 before_script:
-  - psql -c 'create database distribute_reads_test_primary;' -U postgres
-  - psql -c 'create database distribute_reads_test_replica;' -U postgres
+  - createdb distribute_reads_test_primary
+  - createdb distribute_reads_test_replica
 notifications:
   email:
     on_success: never
