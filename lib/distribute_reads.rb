@@ -47,7 +47,8 @@ module DistributeReads
       log "Multiple replicas available, lag only reported for one"
     end
 
-    if %w(PostgreSQL PostGIS).include?(connection.adapter_name)
+    case connection.adapter_name
+    when "PostgreSQL", "PostGIS"
       # cache the version number
       @server_version_num ||= {}
       cache_key = connection.pool.object_id
@@ -66,7 +67,7 @@ module DistributeReads
           ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
         END AS lag".squish
       ).first["lag"].to_f
-    elsif %w(MySQL Mysql2 Mysql2Spatial Mysql2Rgeo).include?(connection.adapter_name)
+    when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo"
       replica_value = Thread.current[:distribute_reads][:replica]
       begin
         # makara doesn't send SHOW queries to replica, so we must force it
@@ -89,6 +90,8 @@ module DistributeReads
       ensure
         Thread.current[:distribute_reads][:replica] = replica_value
       end
+    when "SQLite"
+      0.0
     else
       raise DistributeReads::Error, "Option not supported with this adapter"
     end
