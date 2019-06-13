@@ -86,8 +86,8 @@ module DistributeReads
         else
           status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
           if status
-            if status["Seconds_Behind_Master"].to_s == 'NULL'
-              -1.0
+            if status["Seconds_Behind_Master"].nil?
+              nil
             else
               status["Seconds_Behind_Master"].to_f
             end

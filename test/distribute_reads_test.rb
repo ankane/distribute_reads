@@ -78,13 +78,13 @@ class DistributeReadsTest < Minitest::Test
 
   def test_lag_negative_one
     error = assert_raises DistributeReads::TooMuchLag do
-      with_lag(-1) do
+      with_lag(nil) do
         distribute_reads(max_lag: 1) do
           assert_replica
         end
       end
     end
-    assert_equal "Replica lag is -1 on ActiveRecord::Base", error.message
+    assert_equal "Replica lag is nil on ActiveRecord::Base", error.message
   end
 
   def test_max_lag_under_not_stubbed
@@ -102,7 +102,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_lag_failover_negative_one
-    with_lag(-1) do
+    with_lag(nil) do
       distribute_reads(max_lag: 1, lag_failover: true) do
         assert_primary
       end
