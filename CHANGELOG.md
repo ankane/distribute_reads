@@ -1,6 +1,7 @@
 ## 0.3.0 [unreleased]
 
 - Use logger instead of stderr
+- Dropped support for Active Record < 5
 
 ## 0.2.4
 
