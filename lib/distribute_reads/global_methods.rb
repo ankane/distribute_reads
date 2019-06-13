@@ -21,9 +21,9 @@ module DistributeReads
         if max_lag && !options[:primary]
           Array(options[:lag_on] || [ActiveRecord::Base]).each do |base_model|
             current_lag = DistributeReads.lag(connection: base_model.connection)
-            if current_lag > max_lag || current_lag == -1
+            if current_lag > max_lag || current_lag == -1.0
               message = "Replica lag over #{max_lag} seconds#{options[:lag_on] ? " on #{base_model.name} connection" : ""}"
-              if current_lag == -1
+              if current_lag == -1.0
                 message = "Replica lag is -1 on #{base_model.name}"
               end
 
