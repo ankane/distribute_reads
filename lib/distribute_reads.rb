@@ -120,8 +120,8 @@ module DistributeReads
   end
 end
 
-Makara::Proxy.send :prepend, DistributeReads::AppropriatePool
-Object.send :include, DistributeReads::GlobalMethods
+Makara::Proxy.prepend DistributeReads::AppropriatePool
+Object.include DistributeReads::GlobalMethods
 
 ActiveSupport.on_load(:active_job) do
   require "distribute_reads/job_methods"
