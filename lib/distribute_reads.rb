@@ -84,10 +84,14 @@ module DistributeReads
           status ? status["Replica_lag_in_msec"].to_f / 1000.0 : 0.0
         else
           status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
-          if status["Seconds_Behind_Master"].to_s == 'NULL'
-            status = -1
+          if status
+            if status["Seconds_Behind_Master"].to_s == 'NULL'
+              -1.0
+            else
+              status["Seconds_Behind_Master"].to_f
+            end
           else
-            status ? status["Seconds_Behind_Master"].to_f : 0.0
+            0.0
           end
         end
       ensure
