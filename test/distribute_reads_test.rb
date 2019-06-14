@@ -84,7 +84,7 @@ class DistributeReadsTest < Minitest::Test
         end
       end
     end
-    assert_equal "Replica lag is nil", error.message
+    assert_equal "Replication stopped", error.message
   end
 
   def test_lag_nil_lag_on
@@ -95,7 +95,7 @@ class DistributeReadsTest < Minitest::Test
         end
       end
     end
-    assert_equal "Replica lag is nil on User connection", error.message
+    assert_equal "Replication stopped on User connection", error.message
   end
 
   def test_max_lag_under_not_stubbed

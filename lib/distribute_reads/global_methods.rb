@@ -24,7 +24,7 @@ module DistributeReads
             if current_lag.nil? || current_lag > max_lag
               message =
                 if current_lag.nil?
-                  "Replica lag is nil"
+                  "Replication stopped"
                 else
                   "Replica lag over #{max_lag} seconds"
                 end
