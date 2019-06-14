@@ -24,6 +24,7 @@ module DistributeReads
               begin
                 DistributeReads.replication_lag(connection: base_model.connection)
               rescue DistributeReads::NoReplicasAvailable => e
+                # TODO rescue more exceptions?
                 raise e unless options[:lag_failover]
                 false
               end
