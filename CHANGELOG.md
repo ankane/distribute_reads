@@ -3,7 +3,6 @@
 - Use logger instead of stderr
 - Handle `NULL` replication lag for MySQL
 - Fixed replication lag check running on primary when replicas blacklisted
-- Dropped support for Active Record < 5
 
 ## 0.2.4
 
