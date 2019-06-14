@@ -87,11 +87,14 @@ module DistributeReads
           status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
           if status
             if status["Seconds_Behind_Master"].nil?
+              # replication stopped
+              # https://dev.mysql.com/doc/refman/8.0/en/show-slave-status.html
               nil
             else
               status["Seconds_Behind_Master"].to_f
             end
           else
+            # primary
             0.0
           end
         end
@@ -99,6 +102,7 @@ module DistributeReads
         Thread.current[:distribute_reads][:replica] = replica_value
       end
     when "SQLite"
+      # always primary
       0.0
     else
       raise DistributeReads::Error, "Option not supported with this adapter"
