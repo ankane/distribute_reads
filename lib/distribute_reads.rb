@@ -68,8 +68,11 @@ module DistributeReads
         END AS lag".squish
       ).first["lag"].to_f
     when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo"
-      # makara doesn't send SHOW queries to replica, so we must force it
-      distribute_reads(replica: true, failover: false) do
+      replica_value = Thread.current[:distribute_reads][:replica]
+      begin
+        # makara doesn't send SHOW queries to replica, so we must force it
+        Thread.current[:distribute_reads][:replica] = true
+
         @aurora_mysql ||= {}
         cache_key = connection.pool.object_id
 
@@ -95,6 +98,8 @@ module DistributeReads
             0.0
           end
         end
+      ensure
+        Thread.current[:distribute_reads][:replica] = replica_value
       end
     when "SQLite"
       # never a replica
