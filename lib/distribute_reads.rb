@@ -94,7 +94,7 @@ module DistributeReads
               status["Seconds_Behind_Master"].to_f
             end
           else
-            # primary
+            # not a replica
             0.0
           end
         end
@@ -102,7 +102,7 @@ module DistributeReads
         Thread.current[:distribute_reads][:replica] = replica_value
       end
     when "SQLite"
-      # always primary
+      # never a replica
       0.0
     else
       raise DistributeReads::Error, "Option not supported with this adapter"
