@@ -1,4 +1,4 @@
-## 0.3.0 [unreleased]
+## 0.3.0
 
 - Use logger instead of stderr
 - Handle `NULL` replication lag for MySQL

@@ -137,7 +137,7 @@ DistributeReads.default_options = {
 }
 ```
 
-### Logging [master]
+### Logging
 
 Messages about failover are logged to the Active Record logger by default. Set a different logger with:
 
