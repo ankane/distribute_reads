@@ -20,11 +20,20 @@ module DistributeReads
         max_lag = options[:max_lag]
         if max_lag && !options[:primary]
           Array(options[:lag_on] || [ActiveRecord::Base]).each do |base_model|
-            current_lag = DistributeReads.lag(connection: base_model.connection)
-            if current_lag.nil? || current_lag > max_lag
+            current_lag =
+              begin
+                DistributeReads.replication_lag(connection: base_model.connection)
+              rescue DistributeReads::NoReplicasAvailable => e
+                raise e unless options[:lag_failover]
+                false
+              end
+
+            if !current_lag || current_lag > max_lag
               message =
                 if current_lag.nil?
                   "Replication stopped"
+                elsif !current_lag
+                  "No replicas available"
                 else
                   "Replica lag over #{max_lag} seconds"
                 end

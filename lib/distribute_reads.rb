@@ -32,14 +32,6 @@ module DistributeReads
   end
 
   def self.replication_lag(connection: nil)
-    distribute_reads do
-      lag(connection: connection)
-    end
-  end
-
-  def self.lag(connection: nil)
-    raise DistributeReads::Error, "Don't use outside distribute_reads" unless Thread.current[:distribute_reads]
-
     connection ||= ActiveRecord::Base.connection
 
     replica_pool = connection.instance_variable_get(:@slave_pool)
@@ -47,36 +39,33 @@ module DistributeReads
       log "Multiple replicas available, lag only reported for one"
     end
 
-    case connection.adapter_name
-    when "PostgreSQL", "PostGIS"
-      # cache the version number
-      @server_version_num ||= {}
-      cache_key = connection.pool.object_id
-      @server_version_num[cache_key] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
+    with_replica do
+      case connection.adapter_name
+      when "PostgreSQL", "PostGIS"
+        # cache the version number
+        @server_version_num ||= {}
+        cache_key = connection.pool.object_id
+        @server_version_num[cache_key] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
 
-      lag_condition =
-        if @server_version_num[cache_key] >= 100000
-          "pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn()"
-        else
-          "pg_last_xlog_receive_location() = pg_last_xlog_replay_location()"
-        end
+        lag_condition =
+          if @server_version_num[cache_key] >= 100000
+            "pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn()"
+          else
+            "pg_last_xlog_receive_location() = pg_last_xlog_replay_location()"
+          end
 
-      connection.execute(
-        "SELECT CASE
-          WHEN NOT pg_is_in_recovery() OR #{lag_condition} THEN 0
-          ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
-        END AS lag".squish
-      ).first["lag"].to_f
-    when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo"
-      replica_value = Thread.current[:distribute_reads][:replica]
-      begin
-        # makara doesn't send SHOW queries to replica, so we must force it
-        Thread.current[:distribute_reads][:replica] = true
-
+        connection.execute(
+          "SELECT CASE
+            WHEN NOT pg_is_in_recovery() OR #{lag_condition} THEN 0
+            ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
+          END AS lag".squish
+        ).first["lag"].to_f
+      when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo"
         @aurora_mysql ||= {}
         cache_key = connection.pool.object_id
 
         unless @aurora_mysql.key?(cache_key)
+          # makara doesn't send SHOW queries to replica by default
           @aurora_mysql[cache_key] = connection.exec_query("SHOW VARIABLES LIKE 'aurora_version'").to_hash.any?
         end
 
@@ -98,19 +87,28 @@ module DistributeReads
             0.0
           end
         end
-      ensure
-        Thread.current[:distribute_reads][:replica] = replica_value
+      when "SQLite"
+        # never a replica
+        0.0
+      else
+        raise DistributeReads::Error, "Option not supported with this adapter"
       end
-    when "SQLite"
-      # never a replica
-      0.0
-    else
-      raise DistributeReads::Error, "Option not supported with this adapter"
     end
   end
 
   def self.log(message)
     logger.info("[distribute_reads] #{message}") if logger
+  end
+
+  # private
+  def self.with_replica
+    previous_value = Thread.current[:distribute_reads]
+    begin
+      Thread.current[:distribute_reads] = {replica: true, failover: false}
+      yield
+    ensure
+      Thread.current[:distribute_reads] = previous_value
+    end
   end
 
   # private

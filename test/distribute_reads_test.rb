@@ -266,6 +266,24 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_lag_with_blacklisted
+    with_replicas_blacklisted do
+      assert_raises DistributeReads::NoReplicasAvailable do
+        DistributeReads.replication_lag
+      end
+    end
+  end
+
+  def test_max_lag_no_failover_all_blacklisted
+    with_replicas_blacklisted do
+      assert_raises DistributeReads::NoReplicasAvailable do
+        distribute_reads(max_lag: 1, lag_failover: false) do
+          assert_primary
+        end
+      end
+    end
+  end
+
   private
 
   def by_default
@@ -290,7 +308,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def with_lag(lag)
-    DistributeReads.stub(:lag, lag) do
+    DistributeReads.stub(:replication_lag, lag) do
       yield
     end
   end
