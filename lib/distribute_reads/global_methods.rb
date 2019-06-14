@@ -25,7 +25,6 @@ module DistributeReads
                 DistributeReads.replication_lag(connection: base_model.connection)
               rescue DistributeReads::NoReplicasAvailable => e
                 # TODO rescue more exceptions?
-                raise e unless options[:lag_failover]
                 false
               end
 
@@ -34,7 +33,7 @@ module DistributeReads
                 if current_lag.nil?
                   "Replication stopped"
                 elsif !current_lag
-                  "No replicas available"
+                  "No replicas available for lag check"
                 else
                   "Replica lag over #{max_lag} seconds"
                 end
