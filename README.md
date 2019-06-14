@@ -171,6 +171,14 @@ Get replication lag in seconds
 DistributeReads.replication_lag
 ```
 
+Most of the time, Makara does a great job automatically routing queries to replicas. If it incorrectly routes a query to primary, you can use:
+
+```ruby
+distribute_reads(replica: true) do
+  # send all queries in block to replica
+end
+```
+
 ## Rails 6
 
 Rails 6 has [native support for replicas](https://edgeguides.rubyonrails.org/active_record_multiple_databases.html) :tada:
