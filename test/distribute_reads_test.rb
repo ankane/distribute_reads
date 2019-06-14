@@ -76,17 +76,6 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_max_lag_lag_on
-    error = assert_raises DistributeReads::TooMuchLag do
-      with_lag(2) do
-        distribute_reads(max_lag: 1, lag_on: User) do
-          assert_replica
-        end
-      end
-    end
-    assert_equal "Replica lag over 1 seconds on User connection", error.message
-  end
-
   def test_lag_nil
     error = assert_raises DistributeReads::TooMuchLag do
       with_lag(nil) do
