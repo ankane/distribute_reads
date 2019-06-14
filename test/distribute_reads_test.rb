@@ -274,12 +274,22 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_max_lag_no_failover_all_blacklisted
+  def test_max_lag_no_lag_failover_all_blacklisted
     with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(max_lag: 1, lag_failover: false) do
           # raises error on lag check
         end
+      end
+    end
+  end
+
+  # lag failover overrides failover
+  # unsure if this is best behavior, but it's current behavior
+  def test_max_lag_no_failover_all_blacklisted
+    with_replicas_blacklisted do
+      distribute_reads(max_lag: 1, failover: false, lag_failover: true) do
+        assert_primary
       end
     end
   end
