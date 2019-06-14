@@ -61,7 +61,7 @@ class DistributeReadsTest < Minitest::Test
     error = assert_raises DistributeReads::TooMuchLag do
       with_lag(2) do
         distribute_reads(max_lag: 1) do
-          assert_replica
+          run_query
         end
       end
     end
@@ -80,7 +80,7 @@ class DistributeReadsTest < Minitest::Test
     error = assert_raises DistributeReads::TooMuchLag do
       with_lag(nil) do
         distribute_reads(max_lag: 1) do
-          assert_replica
+          run_query
         end
       end
     end
@@ -91,7 +91,7 @@ class DistributeReadsTest < Minitest::Test
     error = assert_raises DistributeReads::TooMuchLag do
       with_lag(nil) do
         distribute_reads(max_lag: 1, lag_on: User) do
-          assert_replica
+          run_query
         end
       end
     end
@@ -124,7 +124,7 @@ class DistributeReadsTest < Minitest::Test
     error = assert_raises DistributeReads::TooMuchLag do
       with_lag(2) do
         distribute_reads(max_lag: 1, lag_on: User) do
-          assert_replica
+          run_query
         end
       end
     end
@@ -135,7 +135,7 @@ class DistributeReadsTest < Minitest::Test
     error = assert_raises DistributeReads::TooMuchLag do
       with_lag(2) do
         distribute_reads(max_lag: 1, lag_on: [User]) do
-          assert_replica
+          run_query
         end
       end
     end
@@ -167,7 +167,7 @@ class DistributeReadsTest < Minitest::Test
     with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(failover: false) do
-          assert_replica
+          run_query
         end
       end
     end
@@ -188,7 +188,7 @@ class DistributeReadsTest < Minitest::Test
       with_replicas_blacklisted do
         assert_raises DistributeReads::NoReplicasAvailable do
           distribute_reads(failover: false) do
-            assert_replica
+            run_query
           end
         end
       end
@@ -210,7 +210,7 @@ class DistributeReadsTest < Minitest::Test
       assert_raises DistributeReads::TooMuchLag do
         with_lag(2) do
           distribute_reads do
-            assert_replica
+            run_query
           end
         end
       end
@@ -260,13 +260,13 @@ class DistributeReadsTest < Minitest::Test
     with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(replica: true, failover: false) do
-          assert_replica
+          run_query
         end
       end
     end
   end
 
-  def test_lag_with_blacklisted
+  def test_lag_all_blacklisted
     with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         DistributeReads.replication_lag
@@ -278,7 +278,7 @@ class DistributeReadsTest < Minitest::Test
     with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(max_lag: 1, lag_failover: false) do
-          assert_primary
+          run_query
         end
       end
     end
@@ -331,6 +331,11 @@ class DistributeReadsTest < Minitest::Test
 
   def assert_replica(prefix: nil)
     assert_equal "replica", current_database(prefix: prefix)
+  end
+
+  def run_query
+    current_database
+    raise "Use assert_primary or assert_replica instead"
   end
 
   def assert_cache_size(value)
