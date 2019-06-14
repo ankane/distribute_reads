@@ -123,7 +123,7 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_lag_failover_negative_one
+  def test_lag_failover_nil
     with_lag(nil) do
       distribute_reads(max_lag: 1, lag_failover: true) do
         assert_primary
