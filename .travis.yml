@@ -3,7 +3,6 @@ language: ruby
 rvm: 2.6.3
 gemfile:
   - Gemfile
-  - test/gemfiles/activerecord52.gemfile
   - test/gemfiles/makara3.gemfile
 services:
   - postgresql
@@ -11,6 +10,15 @@ script: bundle exec rake test
 before_script:
   - createdb distribute_reads_test_primary
   - createdb distribute_reads_test_replica
+matrix:
+  include:
+    - gemfile: test/gemfiles/activerecord52.gemfile
+      env: ADAPTER=mysql2
+      services:
+        - mysql
+      before_script:
+        - mysqladmin create distribute_reads_test_primary
+        - mysqladmin create distribute_reads_test_replica
 notifications:
   email:
     on_success: never
