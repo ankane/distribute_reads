@@ -278,7 +278,7 @@ class DistributeReadsTest < Minitest::Test
     with_replicas_blacklisted do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(max_lag: 1, lag_failover: false) do
-          run_query
+          # raises error on lag check
         end
       end
     end
