@@ -23,7 +23,7 @@ module DistributeReads
             current_lag =
               begin
                 DistributeReads.replication_lag(connection: base_model.connection)
-              rescue DistributeReads::NoReplicasAvailable => e
+              rescue DistributeReads::NoReplicasAvailable
                 # TODO rescue more exceptions?
                 false
               end
