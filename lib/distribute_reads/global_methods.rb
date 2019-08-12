@@ -35,6 +35,7 @@ module DistributeReads
                 elsif !current_lag
                   "No replicas available for lag check"
                 else
+                  is_lag_over_max = true
                   "Replica lag over #{max_lag} seconds"
                 end
 
@@ -44,7 +45,7 @@ module DistributeReads
                 # TODO possibly per connection
                 Thread.current[:distribute_reads][:primary] = true
                 Thread.current[:distribute_reads][:replica] = false
-                DistributeReads.log "#{message}. Falling back to master pool."
+                DistributeReads.log "#{message}. Falling back to master pool." unless is_lag_over_max && max_lag == 0 && !ENV["DISTRIBUTE_READS_VERBOSE"].present?
                 break
               else
                 raise DistributeReads::TooMuchLag, message

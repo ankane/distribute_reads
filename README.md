@@ -147,6 +147,13 @@ DistributeReads.logger = Logger.new(STDERR)
 
 Or use `nil` to disable logging.
 
+### Debuging
+Some warnings are only logged once, or are silenced.  To get verbose logging for debugging, use the environment variable:
+
+```bash
+DISTRIBUTE_READS_VERBOSE=true
+```
+
 ## Distribute Reads by Default
 
 At some point, you may wish to distribute reads by default.

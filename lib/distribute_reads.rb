@@ -36,7 +36,10 @@ module DistributeReads
 
     replica_pool = connection.instance_variable_get(:@slave_pool)
     if replica_pool && replica_pool.connections.size > 1
-      log "Multiple replicas available, lag only reported for one"
+      if ENV["DISTRIBUTE_READS_VERBOSE"].present? || self.already_logged_multi_replica_warning != true
+        log "Multiple replicas available, lag only reported for one"
+        self.already_logged_multi_replica_warning = true
+      end
     end
 
     with_replica do
