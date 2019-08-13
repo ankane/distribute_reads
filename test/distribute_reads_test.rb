@@ -148,11 +148,11 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_relation
-    assert_log "Call `to_a` inside block to execute query on replica" do
-      distribute_reads do
-        User.all
-      end
+    value = distribute_reads do
+      User.all
     end
+
+    assert_equal value.loaded?, true
   end
 
   def test_failover_true
