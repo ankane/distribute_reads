@@ -97,7 +97,24 @@ module DistributeReads
   end
 
   def self.log(message)
-    logger.info("[distribute_reads] #{message}") if logger
+    if logger
+      logger.info("[distribute_reads] #{message}")
+
+      # show location like Active Record
+      source = backtrace_cleaner.clean(caller.lazy).first
+      logger.info("  ↳ #{source}") if source
+    end
+  end
+
+  # private
+  def self.backtrace_cleaner
+    @backtrace_cleaner ||= begin
+      bc = ActiveSupport::BacktraceCleaner.new
+      bc.add_silencer { |line| line.include?("lib/distribute_reads") }
+      bc.add_silencer { |line| line.include?("lib/makara") }
+      bc.add_silencer { |line| line.include?("lib/active_record") }
+      bc
+    end
   end
 
   # private

@@ -1,3 +1,7 @@
+## 0.3.1 [unreleased]
+
+- Added source location to logging
+
 ## 0.3.0
 
 - Use logger instead of stderr
