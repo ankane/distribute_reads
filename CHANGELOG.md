@@ -1,4 +1,4 @@
-## 0.3.1 [unreleased]
+## 0.3.1
 
 - Added source location to logging
 
