@@ -208,13 +208,13 @@ Everyone is encouraged to help improve this project. Here are a few ways you can
 - Write, clarify, or fix documentation
 - Suggest or add new features
 
-To test, run:
+To get started with development and testing:
 
 ```sh
 git clone https://github.com/ankane/distribute_reads.git
 cd distribute_reads
 createdb distribute_reads_test_primary
 createdb distribute_reads_test_replica
-bundle
-bundle exec rake
+bundle install
+bundle exec rake test
 ```
