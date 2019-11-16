@@ -155,6 +155,15 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_relation_when_loaded
+    refute_log "Call `to_a` inside block to execute query on replica" do
+      distribute_reads do
+        assert_replica
+        User.all.load
+      end
+    end
+  end
+
   def test_failover_true
     with_replicas_blacklisted do
       distribute_reads do
@@ -323,7 +332,7 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def assert_log(message)
+  def prepare_log
     io = StringIO.new
     previous_logger = DistributeReads.logger
     begin
@@ -332,7 +341,18 @@ class DistributeReadsTest < Minitest::Test
     ensure
       DistributeReads.logger = previous_logger
     end
+
+    io
+  end
+
+  def assert_log(message, &block)
+    io = prepare_log(&block)
     assert_includes io.string, "[distribute_reads] #{message}"
+  end
+
+  def refute_log(message, &block)
+    io = prepare_log(&block)
+    refute_includes io.string, "[distribute_reads] #{message}"
   end
 
   def assert_primary(prefix: nil)
