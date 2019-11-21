@@ -40,6 +40,13 @@ ActiveRecord::Migration.create_table :users, force: true do |t|
   t.string :name
 end
 
+# create table on replica as well
+distribute_reads(replica: true) do
+  ActiveRecord::Migration.create_table :users, force: true do |t|
+    t.string :name
+  end
+end
+
 class User < ActiveRecord::Base
 end
 
