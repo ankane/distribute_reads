@@ -98,11 +98,11 @@ module DistributeReads
 
   def self.log(message)
     if logger
-      logger.info("[distribute_reads] #{message}")
+      logger.info { "[distribute_reads] #{message}" }
 
       # show location like Active Record
       source = backtrace_cleaner.clean(caller.lazy).first
-      logger.info("  ↳ #{source}") if source
+      logger.info { "  ↳ #{source}" } if source
     end
   end
 
