@@ -164,6 +164,17 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_eager_load
+    with_eager_load do
+      refute_log "Call `to_a` inside block to execute query on replica" do
+        distribute_reads do
+          assert_replica
+          User.all
+        end
+      end
+    end
+  end
+
   def test_failover_true
     with_replicas_blacklisted do
       distribute_reads do
@@ -318,6 +329,14 @@ class DistributeReadsTest < Minitest::Test
     yield
   ensure
     DistributeReads.default_options = previous
+  end
+
+  def with_eager_load
+    previous = DistributeReads.eager_load
+    DistributeReads.eager_load = true
+    yield
+  ensure
+    DistributeReads.eager_load = previous
   end
 
   def with_replicas_blacklisted

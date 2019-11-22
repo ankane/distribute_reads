@@ -14,8 +14,7 @@ module DistributeReads
   class NoReplicasAvailable < Error; end
 
   class << self
-    attr_accessor :by_default
-    attr_accessor :default_options
+    attr_accessor :by_default, :default_options, :eager_load
     attr_writer :logger
   end
   self.by_default = false
@@ -23,6 +22,7 @@ module DistributeReads
     failover: true,
     lag_failover: false
   }
+  self.eager_load = false
 
   def self.logger
     unless defined?(@logger)

@@ -86,6 +86,12 @@ Call `to_a` inside the block ensure the query runs on a replica.
 users = distribute_reads { User.where(orders_count: 1).to_a }
 ```
 
+You can set relations to eager load with: [master]
+
+```ruby
+DistributeReads.eager_load = true
+```
+
 ## Options
 
 ### Replica Lag

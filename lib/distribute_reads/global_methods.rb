@@ -54,7 +54,13 @@ module DistributeReads
         end
 
         value = yield
-        DistributeReads.log "Call `to_a` inside block to execute query on replica" if value.is_a?(ActiveRecord::Relation) && !previous_value && !value.loaded?
+        if value.is_a?(ActiveRecord::Relation) && !previous_value && !value.loaded?
+          if DistributeReads.eager_load
+            value = value.load
+          else
+            DistributeReads.log "Call `to_a` inside block to execute query on replica"
+          end
+        end
         value
       ensure
         Thread.current[:distribute_reads] = previous_value
