@@ -187,7 +187,7 @@ end
 
 ## Rails 6
 
-Rails 6 has [native support for replicas](https://edgeguides.rubyonrails.org/active_record_multiple_databases.html) :tada:
+Rails 6 has [native support for replicas](https://guides.rubyonrails.org/active_record_multiple_databases.html) :tada:
 
 ```ruby
 ActiveRecord::Base.connected_to(role: :reading) do
