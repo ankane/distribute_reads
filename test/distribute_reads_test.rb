@@ -341,18 +341,15 @@ class DistributeReadsTest < Minitest::Test
     ensure
       DistributeReads.logger = previous_logger
     end
-
-    io
+    io.string
   end
 
   def assert_log(message, &block)
-    io = prepare_log(&block)
-    assert_includes io.string, "[distribute_reads] #{message}"
+    assert_includes prepare_log(&block), "[distribute_reads] #{message}"
   end
 
   def refute_log(message, &block)
-    io = prepare_log(&block)
-    refute_includes io.string, "[distribute_reads] #{message}"
+    refute_includes prepare_log(&block), "[distribute_reads] #{message}"
   end
 
   def assert_primary(prefix: nil)
