@@ -1,3 +1,7 @@
+## 0.3.2 (unreleased)
+
+- Removed warning when relation is loaded
+
 ## 0.3.1 (2019-10-28)
 
 - Added source location to logging
