@@ -80,7 +80,7 @@ ActiveRecord uses [lazy evaluation](https://www.theodinproject.com/courses/ruby-
 users = distribute_reads { User.where(orders_count: 1) } # not executed yet
 ```
 
-Call `to_a` inside the block ensure the query runs on a replica.
+Call `to_a` inside the block to ensure the query runs on a replica.
 
 ```ruby
 users = distribute_reads { User.where(orders_count: 1).to_a }
