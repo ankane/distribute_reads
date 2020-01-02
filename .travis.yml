@@ -1,11 +1,13 @@
-dist: xenial
+dist: bionic
 language: ruby
-rvm: 2.6.3
+rvm: 2.6
 gemfile:
   - Gemfile
   - test/gemfiles/makara3.gemfile
 services:
   - postgresql
+addons:
+  postgresql: 10
 script: bundle exec rake test
 before_script:
   - createdb distribute_reads_test_primary
