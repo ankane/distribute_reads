@@ -1,4 +1,4 @@
-## 0.3.2 (unreleased)
+## 0.3.2 (2020-01-02)
 
 - Added `eager_load` option
 - Removed warning when relation is loaded
