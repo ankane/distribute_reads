@@ -149,9 +149,11 @@ class DistributeReadsTest < Minitest::Test
 
   def test_relation
     assert_log "Call `to_a` inside block to execute query on replica" do
-      distribute_reads do
-        User.all
-      end
+      users =
+        distribute_reads do
+          User.all
+        end
+      assert !users.loaded?
     end
   end
 
@@ -167,10 +169,12 @@ class DistributeReadsTest < Minitest::Test
   def test_eager_load
     with_eager_load do
       refute_log "Call `to_a` inside block to execute query on replica" do
-        distribute_reads do
-          assert_replica
-          User.all
-        end
+        users =
+          distribute_reads do
+            assert_replica
+            User.all
+          end
+        assert users.loaded?
       end
     end
   end
