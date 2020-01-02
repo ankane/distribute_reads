@@ -86,7 +86,7 @@ Call `to_a` or `load` inside the block to ensure the query runs on a replica.
 users = distribute_reads { User.where(orders_count: 1).to_a }
 ```
 
-You can set relations returned from a `distribute_reads` block to automatically load by creating an initializer with: [master]
+You can set relations returned from `distribute_reads` blocks to automatically load by creating an initializer with: [master]
 
 ```ruby
 DistributeReads.eager_load = true
