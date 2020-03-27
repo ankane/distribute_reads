@@ -45,7 +45,7 @@ module DistributeReads
         # cache the version number
         @server_version_num ||= {}
         cache_key = connection.pool.object_id
-        @server_version_num[cache_key] ||= connection.execute("SHOW server_version_num").first["server_version_num"].to_i
+        @server_version_num[cache_key] ||= connection.select_all("SHOW server_version_num").first["server_version_num"].to_i
 
         lag_condition =
           if @server_version_num[cache_key] >= 100000
@@ -54,7 +54,7 @@ module DistributeReads
             "pg_last_xlog_receive_location() = pg_last_xlog_replay_location()"
           end
 
-        connection.execute(
+        connection.select_all(
           "SELECT CASE
             WHEN NOT pg_is_in_recovery() OR #{lag_condition} THEN 0
             ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
