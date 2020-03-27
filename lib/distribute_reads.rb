@@ -66,14 +66,14 @@ module DistributeReads
 
         unless @aurora_mysql.key?(cache_key)
           # makara doesn't send SHOW queries to replica by default
-          @aurora_mysql[cache_key] = connection.exec_query("SHOW VARIABLES LIKE 'aurora_version'").to_hash.any?
+          @aurora_mysql[cache_key] = connection.select_all("SHOW VARIABLES LIKE 'aurora_version'").any?
         end
 
         if @aurora_mysql[cache_key]
-          status = connection.exec_query("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status WHERE Server_id = @@aurora_server_id").to_hash.first
+          status = connection.select_all("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status WHERE Server_id = @@aurora_server_id").first
           status ? status["Replica_lag_in_msec"].to_f / 1000.0 : 0.0
         else
-          status = connection.exec_query("SHOW SLAVE STATUS").to_hash.first
+          status = connection.select_all("SHOW SLAVE STATUS").first
           if status
             if status["Seconds_Behind_Master"].nil?
               # replication stopped
