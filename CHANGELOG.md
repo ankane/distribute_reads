@@ -1,3 +1,7 @@
+## 0.3.3 (unreleased)
+
+- Fixed deprecation warning with MySQL
+
 ## 0.3.2 (2020-01-02)
 
 - Added `eager_load` option
