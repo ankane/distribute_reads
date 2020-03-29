@@ -71,5 +71,5 @@ end
 
 def current_database(prefix: nil)
   func = adapter == "mysql2" ? "database" : "current_database"
-  ActiveRecord::Base.connection.exec_query("#{prefix}SELECT #{func}()").rows.first.first.split("_").last
+  ActiveRecord::Base.connection.select_all("#{prefix}SELECT #{func}()").rows.first.first.split("_").last
 end
