@@ -18,9 +18,8 @@ def adapter
   ENV["ADAPTER"] || "postgresql"
 end
 
-ActiveRecord::Base.establish_connection(
-  adapter: "#{adapter}_makara",
-  makara: {
+def establish_connection(slave_strategy: nil)
+  makara = {
     sticky: true,
     connections: [
       {
@@ -29,12 +28,26 @@ ActiveRecord::Base.establish_connection(
         database: "distribute_reads_test_primary"
       },
       {
+        role: 'slave',
         name: "replica",
+        database: "distribute_reads_test_replica"
+      },
+      {
+        role: 'slave',
+        name: "replica2",
         database: "distribute_reads_test_replica"
       }
     ]
   }
-)
+  makara[:slave_strategy] = slave_strategy if slave_strategy
+
+  ActiveRecord::Base.establish_connection(
+    adapter: "#{adapter}_makara",
+    makara: makara
+  )
+end
+
+establish_connection
 
 ActiveRecord::Migration.create_table :users, force: true do |t|
   t.string :name

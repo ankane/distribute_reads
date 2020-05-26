@@ -318,6 +318,15 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_replica_named
+    establish_connection(slave_strategy: 'name_select')
+    distribute_reads(name: :replica2) do
+      assert_replica
+      assert_strategy(klass: Makara::Strategies::NameSelect)
+      assert_current_config_name(config_name: 'replica2')
+    end
+  end
+
   # TODO uncomment in 0.4.0
   # def test_nil
   #   assert !nil.respond_to?(:distribute_reads)
@@ -386,6 +395,20 @@ class DistributeReadsTest < Minitest::Test
 
   def assert_replica(prefix: nil)
     assert_equal "replica", current_database(prefix: prefix)
+  end
+
+  def assert_strategy(klass: nil)
+    assert_equal(
+      ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).strategy.class,
+      klass
+    )
+  end
+
+  def assert_current_config_name(config_name: nil)
+    assert_equal(
+      ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).strategy.current.config[:name],
+      config_name
+    )
   end
 
   def run_query
