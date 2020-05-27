@@ -221,6 +221,7 @@ git clone https://github.com/ankane/distribute_reads.git
 cd distribute_reads
 createdb distribute_reads_test_primary
 createdb distribute_reads_test_replica
+createdb distribute_reads_test_replica2
 bundle install
 bundle exec rake test
 ```
