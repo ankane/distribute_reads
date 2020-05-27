@@ -27,6 +27,7 @@ jobs:
       before_script:
         - mysqladmin create distribute_reads_test_primary
         - mysqladmin create distribute_reads_test_replica
+        - mysqladmin create distribute_reads_test_replica2
     - rvm: 2.7
       gemfile: test/gemfiles/makara3.gemfile
 notifications:
