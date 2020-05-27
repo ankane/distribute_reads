@@ -8,6 +8,7 @@ script: bundle exec rake test
 before_script:
   - createdb distribute_reads_test_primary
   - createdb distribute_reads_test_replica
+  - createdb distribute_reads_test_replica2
 jobs:
   include:
     - rvm: 2.7
