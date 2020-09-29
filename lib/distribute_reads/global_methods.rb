@@ -1,5 +1,11 @@
+require 'active_record'
+
 module DistributeReads
   module GlobalMethods
+
+    ENABLE_REPORTING = ActiveRecord::Type::Boolean.new.deserialize(ENV.fetch("DISTRIBUTE_READS_ENABLE_REPORTING", "false"))
+    private_constant :ENABLE_REPORTING
+
     def distribute_reads(**options)
       raise ArgumentError, "Missing block" unless block_given?
 
@@ -44,11 +50,14 @@ module DistributeReads
                 # TODO possibly per connection
                 Thread.current[:distribute_reads][:primary] = true
                 Thread.current[:distribute_reads][:replica] = false
-                DistributeReads.log "#{message}. Falling back to master pool."
+                report_lag("distribute_reads.lag", base_model.connection_config[:ic_logical_name], current_lag, max_lag, base_model.name, true, true)
                 break
               else
+                report_lag("distribute_reads.lag", base_model.connection_config[:ic_logical_name], current_lag, max_lag, base_model.name, true, false)
                 raise DistributeReads::TooMuchLag, message
               end
+            else
+              report_lag("distribute_reads.lag", base_model.connection_config[:ic_logical_name], current_lag, max_lag, base_model.name, false, false)
             end
           end
         end
@@ -65,6 +74,10 @@ module DistributeReads
       ensure
         Thread.current[:distribute_reads] = previous_value
       end
+    end
+
+    def report_lag(metric, db_name, lag, max_lag, model_name, max_lag_exceeded, failover)
+      ICMetrics.timing(metric, lag, { db_name: db_name, max_lag: max_lag, model: model_name, max_lag_exceeded: max_lag_exceeded, failover: failover }) if ENABLE_REPORTING
     end
   end
 end
