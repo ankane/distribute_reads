@@ -7,12 +7,10 @@ require "active_job"
 
 ActiveJob::Base.logger.level = Logger::WARN
 
-# to debug
-if ENV["VERBOSE"]
-  logger = ActiveSupport::Logger.new(STDOUT)
-  ActiveRecord::Base.logger = logger
-  # Makara::Logging::Logger.logger = logger
-end
+logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDOUT : nil)
+ActiveRecord::Base.logger = logger
+# Makara::Logging::Logger.logger = logger
+ActiveRecord::Migration.verbose = ENV["VERBOSE"]
 
 def adapter
   ENV["ADAPTER"] || "postgresql"
