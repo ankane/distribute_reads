@@ -149,8 +149,7 @@ end
 
 Makara::Proxy.prepend DistributeReads::AppropriatePool
 Object.include DistributeReads::GlobalMethods
-# TODO uncomment in 0.4.0
-# Object.send :private, :distribute_reads
+Object.send :private, :distribute_reads
 
 ActiveSupport.on_load(:active_job) do
   require "distribute_reads/job_methods"

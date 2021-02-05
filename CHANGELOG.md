@@ -1,6 +1,7 @@
 ## 0.4.0 (unreleased)
 
 - Added support for Makara 0.6 and dropped support for Makara < 0.6
+- Made `distribute_reads` method private to behave like `Kernel` methods
 - Dropped support for Active Record < 5.2 and Ruby < 2.6
 
 ## 0.3.3 (2020-05-06)
