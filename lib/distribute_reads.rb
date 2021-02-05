@@ -128,14 +128,6 @@ module DistributeReads
     end
   end
 
-  # private
-  def self.makara3?
-    unless defined?(@makara3)
-      @makara3 = Gem::Version.new(Makara::VERSION.to_s) < Gem::Version.new("0.4.0")
-    end
-    @makara3
-  end
-
   # legacy
   def self.default_to_primary
     !by_default

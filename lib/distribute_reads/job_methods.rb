@@ -7,11 +7,7 @@ module DistributeReads
     included do
       before_perform do
         if DistributeReads.by_default
-          if DistributeReads.makara3?
-            Makara::Context.set_current(Makara::Context.generate)
-          else
-            Makara::Context.release_all
-          end
+          Makara::Context.release_all
         end
       end
     end
