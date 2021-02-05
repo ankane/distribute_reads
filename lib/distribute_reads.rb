@@ -106,7 +106,6 @@ module DistributeReads
     end
   end
 
-  # private
   def self.backtrace_cleaner
     @backtrace_cleaner ||= begin
       bc = ActiveSupport::BacktraceCleaner.new
@@ -116,8 +115,8 @@ module DistributeReads
       bc
     end
   end
+  private_class_method :backtrace_cleaner
 
-  # private
   def self.with_replica
     previous_value = Thread.current[:distribute_reads]
     begin
@@ -127,6 +126,7 @@ module DistributeReads
       Thread.current[:distribute_reads] = previous_value
     end
   end
+  private_class_method :with_replica
 
   # legacy
   def self.default_to_primary
