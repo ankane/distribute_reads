@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - ruby: 2.7
+        - ruby: 3.0
           gemfile: Gemfile
           postgres: true
         - ruby: 2.7
@@ -17,19 +17,10 @@ jobs:
         - ruby: 2.6
           gemfile: gemfiles/activerecord52.gemfile
           postgres: true
-        - ruby: 2.5
-          gemfile: gemfiles/activerecord51.gemfile
-          postgres: true
-        - ruby: 2.4
-          gemfile: gemfiles/activerecord50.gemfile
-          postgres: true
-        - ruby: 2.7
+        - ruby: 3.0
           gemfile: Gemfile
           adapter: mysql2
           mysql: true
-        - ruby: 2.7
-          gemfile: gemfiles/makara3.gemfile
-          postgres: true
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
