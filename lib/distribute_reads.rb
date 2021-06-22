@@ -6,7 +6,10 @@ require "makara"
 require "distribute_reads/appropriate_pool"
 require "distribute_reads/cache_store"
 require "distribute_reads/global_methods"
+require "distribute_reads/pool"
 require "distribute_reads/version"
+
+require "makara/strategies/name_select"
 
 module DistributeReads
   class Error < StandardError; end
@@ -148,6 +151,8 @@ module DistributeReads
 end
 
 Makara::Proxy.prepend DistributeReads::AppropriatePool
+Makara::Pool.prepend DistributeReads::Pool
+
 Object.include DistributeReads::GlobalMethods
 # TODO uncomment in 0.4.0
 # Object.send :private, :distribute_reads

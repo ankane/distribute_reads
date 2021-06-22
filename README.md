@@ -169,6 +169,38 @@ distribute_reads(primary: true) do
 end
 ```
 
+## Specify replica name
+
+If multiple replicates are defined in the `database.yml' file you can specify which replica to use when calling `distribute_reads`:
+
+```ruby
+distribute_reads(name: :replica1) do
+  # ...
+end
+```
+
+with this:
+```yml
+default: &default
+  url: postgresql-makara:///
+  makara:
+    sticky: true
+    connections:
+      - role: master
+        name: primary
+        url: <%= ENV["DATABASE_URL"] %>
+      - name: replica1
+        url: <%= ENV["REPLICA1_DATABASE_URL"] %>
+      - name: replica2
+        url: <%= ENV["REPLICA2_DATABASE_URL"] %>
+
+development:
+  <<: *default
+
+production:
+  <<: *default
+```
+
 ## Reference
 
 Get replication lag in seconds
