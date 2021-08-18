@@ -42,17 +42,16 @@ module DistributeReads
     with_replica do
       case connection.adapter_name
       when "PostgreSQL", "PostGIS"
+        # cache the version number
+        @server_version_num ||= {}
         cache_key = connection.pool.object_id
+        @server_version_num[cache_key] ||= connection.select_all("SHOW server_version_num").first["server_version_num"].to_i
 
         if is_aurora_postgres?(connection, cache_key)
           # there's no official way to get server_id/session_id from aurora posgrest at the moment.
-          status = connection.select_all("SELECT replica_lag_in_msec FROM aurora_replica_status() WHERE session_id != 'MASTER_SESSION_ID'").first
+          status = connection.select_all("SELECT MAX(replica_lag_in_msec) FROM aurora_replica_status() WHERE session_id != 'MASTER_SESSION_ID'").first
           status ? status["replica_lag_in_msec"].to_f / 1000.0 : 0.0
         else
-          # cache the version number
-          @server_version_num ||= {}
-          @server_version_num[cache_key] ||= connection.select_all("SHOW server_version_num").first["server_version_num"].to_i
-
           lag_condition =
             if @server_version_num[cache_key] >= 100000
               "pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn()"
@@ -68,9 +67,15 @@ module DistributeReads
           ).first["lag"].to_f
         end
       when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo"
+        @aurora_mysql ||= {}
         cache_key = connection.pool.object_id
 
-        if is_aurora_mysql?(connection, cache_key)
+        unless @aurora_mysql.key?(cache_key)
+          # makara doesn't send SHOW queries to replica by default
+          @aurora_mysql[cache_key] = connection.select_all("SHOW VARIABLES LIKE 'aurora_version'").any?
+        end
+
+        if @aurora_mysql[cache_key]
           status = connection.select_all("SELECT Replica_lag_in_msec FROM mysql.ro_replica_status WHERE Server_id = @@aurora_server_id").first
           status ? status["Replica_lag_in_msec"].to_f / 1000.0 : 0.0
         else
@@ -143,14 +148,6 @@ module DistributeReads
       connection.select_all(
         "select backend_type from pg_stat_activity where backend_type='aurora runtime'"
       ).any?
-    end
-  end
-
-  def self.is_aurora_mysql?(connection, cache_key)
-    @aurora_mysql_cache ||= {}
-    @aurora_mysql_cache[cache_key] ||= begin
-      # makara doesn't send SHOW queries to replica by default
-      connection.select_all("SHOW VARIABLES LIKE 'aurora_version'").any?
     end
   end
 
