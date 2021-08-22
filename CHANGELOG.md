@@ -1,4 +1,4 @@
-## 0.3.4 (unreleased)
+## 0.3.4 (2021-08-22)
 
 - Added support for Aurora Postgres replication lag
 
