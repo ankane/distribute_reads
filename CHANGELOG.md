@@ -1,3 +1,7 @@
+## 0.3.4 (unreleased)
+
+- Added support for Aurora Postgres replication lag
+
 ## 0.3.3 (2020-05-06)
 
 - Fixed deprecation warning with MySQL

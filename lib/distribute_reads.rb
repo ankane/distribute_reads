@@ -43,13 +43,19 @@ module DistributeReads
       case connection.adapter_name
       when "PostgreSQL", "PostGIS"
         # cache the version number
-        @server_version_num ||= {}
+        @aurora_postgres ||= {}
         cache_key = connection.pool.object_id
+
+        unless @aurora_postgres.key?(cache_key)
+          @aurora_postgres[cache_key] = connection.select_all("SELECT 1 FROM pg_stat_activity WHERE backend_type = 'aurora runtime'").any?
+        end
+
+        @server_version_num ||= {}
         @server_version_num[cache_key] ||= connection.select_all("SHOW server_version_num").first["server_version_num"].to_i
 
-        if is_aurora_postgres?(connection, cache_key)
-          # there's no official way to get server_id/session_id from aurora posgrest at the moment.
-          status = connection.select_all("SELECT MAX(replica_lag_in_msec) FROM aurora_replica_status() WHERE session_id != 'MASTER_SESSION_ID'").first
+        if @aurora_postgres[cache_key]
+          # no way to get session_id at the moment
+          status = connection.select_all("SELECT MAX(replica_lag_in_msec) AS replica_lag_in_msec FROM aurora_replica_status() WHERE session_id != 'MASTER_SESSION_ID'").first
           status ? status["replica_lag_in_msec"].to_f / 1000.0 : 0.0
         else
           lag_condition =
@@ -140,15 +146,6 @@ module DistributeReads
       @makara3 = Gem::Version.new(Makara::VERSION.to_s) < Gem::Version.new("0.4.0")
     end
     @makara3
-  end
-
-  def self.is_aurora_postgres?(connection, cache_key)
-    @auroral_postgres_cache ||= {}
-    @auroral_postgres_cache[cache_key] ||= begin
-      connection.select_all(
-        "select backend_type from pg_stat_activity where backend_type='aurora runtime'"
-      ).any?
-    end
   end
 
   # legacy
