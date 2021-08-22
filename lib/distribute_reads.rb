@@ -55,8 +55,11 @@ module DistributeReads
 
         if @aurora_postgres[cache_key]
           # no way to get session_id at the moment
-          # TODO see if there's a way to detect primary and set lag to 0
-          status = connection.select_all("SELECT MAX(replica_lag_in_msec) AS replica_lag_in_msec FROM aurora_replica_status() WHERE session_id != 'MASTER_SESSION_ID'").first
+          # when possible, also set lag to 0 for primary
+          status = connection.select_all("SELECT MAX(replica_lag_in_msec) AS replica_lag_in_msec, COUNT(*) AS replica_count FROM aurora_replica_status() WHERE session_id != 'MASTER_SESSION_ID'").first
+          if status && status["replica_count"].to_i > 1
+            log "Multiple readers available, taking max lag of all of them"
+          end
           status ? status["replica_lag_in_msec"].to_f / 1000.0 : 0.0
         else
           lag_condition =
