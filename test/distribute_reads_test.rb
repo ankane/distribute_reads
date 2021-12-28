@@ -357,12 +357,8 @@ class DistributeReadsTest < Minitest::Test
 
   def prepare_log
     io = StringIO.new
-    previous_logger = DistributeReads.logger
-    begin
-      DistributeReads.logger = Logger.new(io)
+    DistributeReads.stub(:logger, Logger.new(io)) do
       yield
-    ensure
-      DistributeReads.logger = previous_logger
     end
     io.string
   end
