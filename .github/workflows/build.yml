@@ -26,7 +26,7 @@ jobs:
           gemfile: gemfiles/activerecord50.gemfile
           postgres: true
         - ruby: "3.0"
-          gemfile: Gemfile
+          gemfile: gemfiles/activerecord61.gemfile
           adapter: mysql2
           mysql: true
         - ruby: 2.7
