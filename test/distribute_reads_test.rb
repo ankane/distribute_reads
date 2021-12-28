@@ -326,26 +326,21 @@ class DistributeReadsTest < Minitest::Test
   private
 
   def by_default
-    DistributeReads.by_default = true
-    yield
-  ensure
-    DistributeReads.by_default = false
+    DistributeReads.stub(:by_default, true) do
+      yield
+    end
   end
 
   def with_default_options(options)
-    previous = DistributeReads.default_options
-    DistributeReads.default_options = options
-    yield
-  ensure
-    DistributeReads.default_options = previous
+    DistributeReads.stub(:default_options, options) do
+      yield
+    end
   end
 
   def with_eager_load
-    previous = DistributeReads.eager_load
-    DistributeReads.eager_load = true
-    yield
-  ensure
-    DistributeReads.eager_load = previous
+    DistributeReads.stub(:eager_load, true) do
+      yield
+    end
   end
 
   def with_replicas_blacklisted
