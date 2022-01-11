@@ -3,12 +3,7 @@ require_relative "test_helper"
 class DistributeReadsTest < Minitest::Test
   def setup
     # reset context
-    if DistributeReads.makara3?
-      Makara::Cache.store = :memory
-      Makara::Context.set_current(Makara::Context.generate)
-    else
-      Makara::Context.release_all
-    end
+    Makara::Context.release_all
   end
 
   def test_default
@@ -318,10 +313,9 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  # TODO uncomment in 0.4.0
-  # def test_nil
-  #   assert !nil.respond_to?(:distribute_reads)
-  # end
+  def test_nil
+    assert !nil.respond_to?(:distribute_reads)
+  end
 
   private
 
@@ -344,7 +338,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def with_replicas_blacklisted
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+    ActiveRecord::Base.connection.instance_variable_get(:@replica_pool).stub(:completely_blacklisted?, true) do
       yield
     end
   end
@@ -385,10 +379,6 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def assert_cache_size(value)
-    if DistributeReads.makara3?
-      assert_equal value, Makara::Cache.send(:store).instance_variable_get(:@data).size
-    else
-      assert_equal value, Makara::Context.send(:current).staged_data.size
-    end
+    assert_equal value, Makara::Context.send(:current).staged_data.size
   end
 end

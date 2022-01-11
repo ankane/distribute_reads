@@ -34,7 +34,7 @@ module DistributeReads
   def self.replication_lag(connection: nil)
     connection ||= ActiveRecord::Base.connection
 
-    replica_pool = connection.instance_variable_get(:@slave_pool)
+    replica_pool = connection.instance_variable_get(:@replica_pool)
     if replica_pool && replica_pool.connections.size > 1
       log "Multiple replicas available, lag only reported for one"
     end
@@ -126,7 +126,6 @@ module DistributeReads
     end
   end
 
-  # private
   def self.backtrace_cleaner
     @backtrace_cleaner ||= begin
       bc = ActiveSupport::BacktraceCleaner.new
@@ -136,8 +135,8 @@ module DistributeReads
       bc
     end
   end
+  private_class_method :backtrace_cleaner
 
-  # private
   def self.with_replica
     previous_value = Thread.current[:distribute_reads]
     begin
@@ -147,14 +146,7 @@ module DistributeReads
       Thread.current[:distribute_reads] = previous_value
     end
   end
-
-  # private
-  def self.makara3?
-    unless defined?(@makara3)
-      @makara3 = Gem::Version.new(Makara::VERSION.to_s) < Gem::Version.new("0.4.0")
-    end
-    @makara3
-  end
+  private_class_method :with_replica
 
   # legacy
   def self.default_to_primary
@@ -169,8 +161,7 @@ end
 
 Makara::Proxy.prepend DistributeReads::AppropriatePool
 Object.include DistributeReads::GlobalMethods
-# TODO uncomment in 0.4.0
-# Object.send :private, :distribute_reads
+Object.send :private, :distribute_reads
 
 ActiveSupport.on_load(:active_job) do
   require "distribute_reads/job_methods"
