@@ -47,7 +47,7 @@ module DistributeReads
         cache_key = connection.pool.object_id
 
         unless @aurora_postgres.key?(cache_key)
-          @aurora_postgres[cache_key] = connection.select_all("SELECT 1 FROM pg_stat_activity WHERE backend_type = 'aurora runtime'").any?
+          @aurora_postgres[cache_key] = connection.select_all("SELECT 1 FROM pg_stat_activity WHERE backend_type IN ('aurora runtime', 'aurora runtime process')").any?
         end
 
         @server_version_num ||= {}
