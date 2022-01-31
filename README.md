@@ -11,7 +11,7 @@ Scale database reads to replicas in Rails
 Add this line to your application’s Gemfile:
 
 ```ruby
-gem 'distribute_reads'
+gem "distribute_reads"
 ```
 
 ## How to Use
