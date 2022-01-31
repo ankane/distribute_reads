@@ -1,4 +1,4 @@
-## 0.3.5 (unreleased)
+## 0.3.5 (2022-01-30)
 
 - Added support for Aurora Postgres 13 replication lag
 
