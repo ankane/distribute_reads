@@ -21,8 +21,6 @@ jobs:
             gemfile: gemfiles/activerecord51.gemfile
           - ruby: 2.4
             gemfile: gemfiles/activerecord50.gemfile
-          - ruby: 2.7
-            gemfile: gemfiles/makara3.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:

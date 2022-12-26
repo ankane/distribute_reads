@@ -1,3 +1,7 @@
+## 0.4.0 (unreleased)
+
+- Dropped support for Makara 0.3
+
 ## 0.3.5 (2022-01-30)
 
 - Added support for Aurora Postgres 13 replication lag
