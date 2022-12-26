@@ -338,7 +338,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def with_replicas_blacklisted
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+    ActiveRecord::Base.connection.instance_variable_get(:@replica_pool).stub(:completely_blacklisted?, true) do
       yield
     end
   end

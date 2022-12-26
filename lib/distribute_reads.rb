@@ -34,7 +34,7 @@ module DistributeReads
   def self.replication_lag(connection: nil)
     connection ||= ActiveRecord::Base.connection
 
-    replica_pool = connection.instance_variable_get(:@slave_pool)
+    replica_pool = connection.instance_variable_get(:@replica_pool)
     if replica_pool && replica_pool.connections.size > 1
       log "Multiple replicas available, lag only reported for one"
     end
