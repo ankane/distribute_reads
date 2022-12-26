@@ -16,7 +16,7 @@ gem "distribute_reads"
 
 ## How to Use
 
-[Makara](https://github.com/taskrabbit/makara) does most of the work. First, update `database.yml` to use it:
+[Makara](https://github.com/instacart/makara) does most of the work. First, update `database.yml` to use it:
 
 ```yml
 default: &default
