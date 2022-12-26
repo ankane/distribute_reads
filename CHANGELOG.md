@@ -1,6 +1,7 @@
 ## 0.4.0 (unreleased)
 
 - Dropped support for Makara 0.3
+- Dropped support for Ruby < 2.6 and Active Record < 5.2
 
 ## 0.3.5 (2022-01-30)
 
