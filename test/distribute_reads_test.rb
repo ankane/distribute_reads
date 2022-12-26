@@ -313,10 +313,9 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  # TODO uncomment in 0.4.0
-  # def test_nil
-  #   assert !nil.respond_to?(:distribute_reads)
-  # end
+  def test_nil
+    assert !nil.respond_to?(:distribute_reads)
+  end
 
   private
 

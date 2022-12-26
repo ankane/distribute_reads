@@ -1,5 +1,6 @@
 ## 0.4.0 (unreleased)
 
+- Made `distribute_reads` method private to behave like `Kernel` methods
 - Dropped support for Makara 0.3
 - Dropped support for Ruby < 2.6 and Active Record < 5.2
 
