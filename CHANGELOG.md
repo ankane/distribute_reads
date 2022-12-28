@@ -1,4 +1,4 @@
-## 0.4.0 (unreleased)
+## 0.4.0 (2022-12-28)
 
 - Made `distribute_reads` method private to behave like `Kernel` methods
 - Dropped support for Makara 0.3
