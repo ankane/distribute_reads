@@ -3,10 +3,10 @@ require "active_support"
 require "makara"
 
 # modules
-require "distribute_reads/appropriate_pool"
-require "distribute_reads/cache_store"
-require "distribute_reads/global_methods"
-require "distribute_reads/version"
+require_relative "distribute_reads/appropriate_pool"
+require_relative "distribute_reads/cache_store"
+require_relative "distribute_reads/global_methods"
+require_relative "distribute_reads/version"
 
 module DistributeReads
   class Error < StandardError; end
@@ -164,6 +164,6 @@ Object.include DistributeReads::GlobalMethods
 Object.send :private, :distribute_reads
 
 ActiveSupport.on_load(:active_job) do
-  require "distribute_reads/job_methods"
+  require_relative "distribute_reads/job_methods"
   include DistributeReads::JobMethods
 end
