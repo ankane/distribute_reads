@@ -4,7 +4,7 @@ Scale database reads to replicas in Rails
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-[![Build Status](https://github.com/ankane/distribute_reads/workflows/build/badge.svg?branch=master)](https://github.com/ankane/distribute_reads/actions)
+[![Build Status](https://github.com/ankane/distribute_reads/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/distribute_reads/actions)
 
 ## Installation
 
