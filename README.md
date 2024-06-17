@@ -185,9 +185,9 @@ distribute_reads(replica: true) do
 end
 ```
 
-## Rails 6
+## Rails
 
-Rails 6 has [native support for replicas](https://guides.rubyonrails.org/active_record_multiple_databases.html) :tada:
+Rails 6+ has [native support for replicas](https://guides.rubyonrails.org/active_record_multiple_databases.html) :tada:
 
 ```ruby
 ActiveRecord::Base.connected_to(role: :reading) do
@@ -195,7 +195,7 @@ ActiveRecord::Base.connected_to(role: :reading) do
 end
 ```
 
-However, it’s not able to automatically route queries like Makara just yet.
+However, it’s not able to do automatic statement-based routing like Makara yet.
 
 ## Thanks
 
