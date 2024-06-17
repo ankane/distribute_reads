@@ -1,3 +1,7 @@
+## 0.5.0 (unreleased)
+
+- Dropped support for Ruby < 3 and Active Record < 6.1
+
 ## 0.4.0 (2022-12-28)
 
 - Made `distribute_reads` method private to behave like `Kernel` methods
