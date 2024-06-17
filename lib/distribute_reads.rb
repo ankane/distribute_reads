@@ -4,7 +4,6 @@ require "makara"
 
 # modules
 require_relative "distribute_reads/appropriate_pool"
-require_relative "distribute_reads/cache_store"
 require_relative "distribute_reads/global_methods"
 require_relative "distribute_reads/version"
 
