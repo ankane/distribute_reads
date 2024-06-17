@@ -15,5 +15,5 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 3"
 
-  spec.add_dependency "makara", ">= 0.5"
+  spec.add_dependency "makara", ">= 0.6.0.pre"
 end

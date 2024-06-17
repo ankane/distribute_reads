@@ -24,7 +24,7 @@ default: &default
   makara:
     sticky: true
     connections:
-      - role: master
+      - role: primary
         name: primary
         url: <%= ENV["DATABASE_URL"] %>
       - name: replica

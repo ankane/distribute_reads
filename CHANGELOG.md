@@ -1,3 +1,7 @@
+## 1.0.0 (unreleased)
+
+- Added support for Makara 0.6 and dropped support for Makara < 0.6
+
 ## 0.5.0 (unreleased)
 
 - Dropped support for Makara 0.4

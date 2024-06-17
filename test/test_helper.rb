@@ -22,7 +22,7 @@ ActiveRecord::Base.establish_connection(
     sticky: true,
     connections: [
       {
-        role: "master",
+        role: "primary",
         name: "primary",
         database: "distribute_reads_test_primary"
       },
