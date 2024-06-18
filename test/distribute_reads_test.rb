@@ -250,7 +250,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_unknown_keywords
-    error = assert_raises(ArgumentError) { distribute_reads(hi: 1, bye: 2) {} }
+    error = assert_raises(ArgumentError) { distribute_reads(hi: 1, bye: 2) { } }
     assert_equal "Unknown keywords: hi, bye", error.message
   end
 
