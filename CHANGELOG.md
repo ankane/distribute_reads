@@ -1,4 +1,4 @@
-## 0.5.0 (unreleased)
+## 0.5.0 (2024-06-24)
 
 - Dropped support for Makara 0.4
 - Dropped support for Ruby < 3.1 and Active Record < 6.1
