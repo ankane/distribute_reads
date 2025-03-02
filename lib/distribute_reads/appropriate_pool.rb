@@ -3,7 +3,7 @@ module DistributeReads
     def _appropriate_pool(*args)
       if Thread.current[:distribute_reads]
         if Thread.current[:distribute_reads][:replica]
-          if @slave_pool.completely_blacklisted?
+          if @slave_pool.completely_blacklisted? || args[0] == :transaction
             raise DistributeReads::NoReplicasAvailable, "No replicas available" if Thread.current[:distribute_reads][:failover] == false
             DistributeReads.log "No replicas available. Falling back to master pool."
             @master_pool

@@ -152,6 +152,21 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_commit_callbacks
+    executed = false
+    klass = Class.new(User) do
+      before_commit do
+        executed = true
+      end
+    end
+
+    distribute_reads(replica: true) do
+      klass.create!(name: "Bang")
+    end
+
+    assert_equal executed, true
+  end
+
   def test_relation_when_loaded
     refute_log "Call `to_a` inside block to execute query on replica" do
       distribute_reads do
