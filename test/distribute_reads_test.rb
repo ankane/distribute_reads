@@ -222,6 +222,7 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  # unsure if this is best behavior, but it's current behavior
   def test_by_default_failover_no_block_default_options
     with_default_options(failover: false) do
       by_default do
