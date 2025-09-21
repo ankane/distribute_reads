@@ -9,12 +9,6 @@ jobs:
         include:
           - ruby: 3.4
             gemfile: Gemfile
-          - ruby: 3.3
-            gemfile: Gemfile
-          - ruby: 3.2
-            gemfile: gemfiles/activerecord70.gemfile
-          - ruby: 3.1
-            gemfile: gemfiles/activerecord61.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
@@ -34,7 +28,4 @@ jobs:
       - run: |
           mysqladmin create distribute_reads_test_primary
           mysqladmin create distribute_reads_test_replica
-        # Ruby 3.1 is fixed in 0.6.0.pre
-        # Active Record 7.1+ is currently broken
-      - if: ${{ matrix.ruby < 3.1 }}
-        run: ADAPTER=mysql2 bundle exec rake test
+      - run: ADAPTER=mysql2 bundle exec rake test
