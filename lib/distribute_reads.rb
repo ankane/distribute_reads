@@ -84,7 +84,7 @@ module DistributeReads
         cache_key = connection.pool.object_id
 
         unless @aurora_mysql.key?(cache_key)
-          # makara doesn't send SHOW queries to replica by default
+          # SHOW queries not sent to replica by default
           @aurora_mysql[cache_key] = connection.select_all("SHOW VARIABLES LIKE 'aurora_version'").any?
         end
 
