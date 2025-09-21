@@ -195,7 +195,7 @@ ActiveRecord::Base.connected_to(role: :reading) do
 end
 ```
 
-However, it’s not able to do automatic statement-based routing like Makara yet.
+However, it’s not able to do automatic statement-based routing yet.
 
 ## Thanks
 
