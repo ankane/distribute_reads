@@ -175,7 +175,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_failover_true
-    with_replicas_blacklisted do
+    with_replicas_down do
       distribute_reads do
         assert_primary
       end
@@ -183,7 +183,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_failover_false
-    with_replicas_blacklisted do
+    with_replicas_down do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(failover: false) do
           run_query
@@ -194,7 +194,7 @@ class DistributeReadsTest < Minitest::Test
 
   def test_by_default_failover_true
     by_default do
-      with_replicas_blacklisted do
+      with_replicas_down do
         distribute_reads do
           assert_primary
         end
@@ -204,7 +204,7 @@ class DistributeReadsTest < Minitest::Test
 
   def test_by_default_failover_false
     by_default do
-      with_replicas_blacklisted do
+      with_replicas_down do
         assert_raises DistributeReads::NoReplicasAvailable do
           distribute_reads(failover: false) do
             run_query
@@ -216,7 +216,7 @@ class DistributeReadsTest < Minitest::Test
 
   def test_by_default_failover_no_block
     by_default do
-      with_replicas_blacklisted do
+      with_replicas_down do
         assert_primary
       end
     end
@@ -225,7 +225,7 @@ class DistributeReadsTest < Minitest::Test
   def test_by_default_failover_no_block_default_options
     with_default_options(failover: false) do
       by_default do
-        with_replicas_blacklisted do
+        with_replicas_down do
           assert_primary
         end
       end
@@ -286,7 +286,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_replica_failover_true
-    with_replicas_blacklisted do
+    with_replicas_down do
       distribute_reads(replica: true) do
         assert_primary
       end
@@ -294,7 +294,7 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_replica_failover_false
-    with_replicas_blacklisted do
+    with_replicas_down do
       assert_raises DistributeReads::NoReplicasAvailable do
         distribute_reads(replica: true, failover: false) do
           run_query
@@ -303,16 +303,16 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def test_lag_all_blacklisted
-    with_replicas_blacklisted do
+  def test_lag_all_down
+    with_replicas_down do
       assert_raises DistributeReads::NoReplicasAvailable do
         DistributeReads.replication_lag
       end
     end
   end
 
-  def test_max_lag_no_lag_failover_all_blacklisted
-    with_replicas_blacklisted do
+  def test_max_lag_no_lag_failover_all_down
+    with_replicas_down do
       assert_raises DistributeReads::TooMuchLag do
         distribute_reads(max_lag: 1, lag_failover: false) do
           # raises error on lag check
@@ -323,8 +323,8 @@ class DistributeReadsTest < Minitest::Test
 
   # lag failover overrides failover
   # unsure if this is best behavior, but it's current behavior
-  def test_max_lag_no_failover_all_blacklisted
-    with_replicas_blacklisted do
+  def test_max_lag_no_failover_all_down
+    with_replicas_down do
       distribute_reads(max_lag: 1, failover: false, lag_failover: true) do
         assert_primary
       end
@@ -355,7 +355,7 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
-  def with_replicas_blacklisted
+  def with_replicas_down
     ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
       yield
     end
