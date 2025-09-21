@@ -214,6 +214,24 @@ class DistributeReadsTest < Minitest::Test
     end
   end
 
+  def test_by_default_failover_no_block
+    by_default do
+      with_replicas_blacklisted do
+        assert_primary
+      end
+    end
+  end
+
+  def test_by_default_failover_no_block_default_options
+    with_default_options(failover: false) do
+      by_default do
+        with_replicas_blacklisted do
+          assert_primary
+        end
+      end
+    end
+  end
+
   def test_by_default_active_job
     by_default do
       ReadWriteJob.perform_now
