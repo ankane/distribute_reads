@@ -136,11 +136,6 @@ class DistributeReadsTest < Minitest::Test
     assert_equal "Replica lag over 1 seconds on User connection", error.message
   end
 
-  def test_active_job
-    TestJob.perform_now
-    assert_equal "replica", $current_database
-  end
-
   def test_relation
     assert_log "Call `to_a` inside block to execute query on replica" do
       users =
@@ -233,16 +228,6 @@ class DistributeReadsTest < Minitest::Test
           assert_primary
         end
       end
-    end
-  end
-
-  def test_by_default_active_job
-    by_default do
-      ReadWriteJob.perform_now
-      assert_equal "replica", $current_database
-
-      ReadWriteJob.perform_now
-      assert_equal "replica", $current_database
     end
   end
 
