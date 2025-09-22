@@ -1,11 +1,6 @@
 require_relative "test_helper"
 
 class DistributeReadsTest < Minitest::Test
-  def setup
-    # reset context
-    Makara::Context.release_all
-  end
-
   def test_default
     assert_primary
     assert_cache_size 0

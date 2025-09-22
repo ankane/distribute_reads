@@ -3,6 +3,10 @@ Bundler.require(:default)
 require "minitest/autorun"
 require "minitest/pride"
 
+def adapter
+  ENV["ADAPTER"] || "postgresql"
+end
+
 require_relative "support/active_record"
 require_relative "support/active_job"
 
@@ -13,4 +17,11 @@ end
 def current_database(prefix: nil)
   func = adapter == "mysql2" ? "database" : "current_database"
   ActiveRecord::Base.connection.select_all("#{prefix}SELECT #{func}()").rows.first.first.split("_").last
+end
+
+class Minitest::Test
+  def setup
+    # reset context
+    Makara::Context.release_all
+  end
 end

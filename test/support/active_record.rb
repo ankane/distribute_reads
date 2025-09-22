@@ -5,10 +5,6 @@ ActiveRecord::Base.logger = logger
 # Makara::Logging::Logger.logger = logger
 ActiveRecord::Migration.verbose = ENV["VERBOSE"]
 
-def adapter
-  ENV["ADAPTER"] || "postgresql"
-end
-
 ActiveRecord::Base.establish_connection(
   adapter: "#{adapter}_makara",
   makara: {
