@@ -1,5 +1,6 @@
 ## 0.6.0 (unreleased)
 
+- Removed `default_to_primary` option (use `by_default` instead)
 - Dropped support for Ruby < 3.2 and Active Record < 7.1
 
 ## 0.5.0 (2024-06-24)

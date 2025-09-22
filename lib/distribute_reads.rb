@@ -146,16 +146,6 @@ module DistributeReads
     end
   end
   private_class_method :with_replica
-
-  # legacy
-  def self.default_to_primary
-    !by_default
-  end
-
-  # legacy
-  def self.default_to_primary=(value)
-    self.by_default = !value
-  end
 end
 
 Makara::Proxy.prepend DistributeReads::AppropriatePool
