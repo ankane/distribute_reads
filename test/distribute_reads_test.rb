@@ -100,17 +100,21 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_lag_failover
-    with_lag(2) do
-      distribute_reads(max_lag: 1, lag_failover: true) do
-        assert_primary
+    assert_log "Replica lag over 1 seconds. Falling back to master pool." do
+      with_lag(2) do
+        distribute_reads(max_lag: 1, lag_failover: true) do
+          assert_primary
+        end
       end
     end
   end
 
   def test_lag_failover_nil
-    with_lag(nil) do
-      distribute_reads(max_lag: 1, lag_failover: true) do
-        assert_primary
+    assert_log "Replication stopped. Falling back to master pool." do
+      with_lag(nil) do
+        distribute_reads(max_lag: 1, lag_failover: true) do
+          assert_primary
+        end
       end
     end
   end
@@ -175,9 +179,11 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_failover_true
-    with_replicas_down do
-      distribute_reads do
-        assert_primary
+    assert_log "No replicas available. Falling back to master pool." do
+      with_replicas_down do
+        distribute_reads do
+          assert_primary
+        end
       end
     end
   end
@@ -193,10 +199,12 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_by_default_failover_true
-    by_default do
-      with_replicas_down do
-        distribute_reads do
-          assert_primary
+    assert_log "No replicas available. Falling back to master pool." do
+      by_default do
+        with_replicas_down do
+          distribute_reads do
+            assert_primary
+          end
         end
       end
     end
@@ -287,9 +295,11 @@ class DistributeReadsTest < Minitest::Test
   end
 
   def test_replica_failover_true
-    with_replicas_down do
-      distribute_reads(replica: true) do
-        assert_primary
+    assert_log "No replicas available. Falling back to master pool." do
+      with_replicas_down do
+        distribute_reads(replica: true) do
+          assert_primary
+        end
       end
     end
   end
@@ -325,9 +335,11 @@ class DistributeReadsTest < Minitest::Test
   # lag failover overrides failover
   # unsure if this is best behavior, but it's current behavior
   def test_max_lag_no_failover_all_down
-    with_replicas_down do
-      distribute_reads(max_lag: 1, failover: false, lag_failover: true) do
-        assert_primary
+    assert_log "No replicas available for lag check. Falling back to master pool." do
+      with_replicas_down do
+        distribute_reads(max_lag: 1, failover: false, lag_failover: true) do
+          assert_primary
+        end
       end
     end
   end
@@ -370,7 +382,8 @@ class DistributeReadsTest < Minitest::Test
 
   def prepare_log
     io = StringIO.new
-    DistributeReads.stub(:logger, Logger.new(io)) do
+    logger = ActiveSupport::BroadcastLogger.new(ActiveSupport::Logger.new(io), ActiveRecord::Base.logger)
+    DistributeReads.stub(:logger, logger) do
       yield
     end
     io.string
