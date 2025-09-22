@@ -5,7 +5,7 @@ module DistributeReads
         if Thread.current[:distribute_reads][:replica]
           if @slave_pool.completely_blacklisted?
             raise DistributeReads::NoReplicasAvailable, "No replicas available" if Thread.current[:distribute_reads][:failover] == false
-            DistributeReads.log "No replicas available. Falling back to master pool."
+            DistributeReads.log "No replicas available. Falling back to primary."
             @master_pool
           else
             @slave_pool
@@ -15,7 +15,7 @@ module DistributeReads
             if Thread.current[:distribute_reads][:failover] == false
               raise DistributeReads::NoReplicasAvailable, "No replicas available"
             else
-              DistributeReads.log "No replicas available. Falling back to master pool."
+              DistributeReads.log "No replicas available. Falling back to primary."
             end
           end
           stick_to_master(*args) if DistributeReads.by_default

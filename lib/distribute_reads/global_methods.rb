@@ -44,7 +44,7 @@ module DistributeReads
                 # TODO possibly per connection
                 Thread.current[:distribute_reads][:primary] = true
                 Thread.current[:distribute_reads][:replica] = false
-                DistributeReads.log "#{message}. Falling back to master pool."
+                DistributeReads.log "#{message}. Falling back to primary."
                 break
               else
                 raise DistributeReads::TooMuchLag, message
