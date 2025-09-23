@@ -15,14 +15,14 @@ def insert_value
 end
 
 def current_database(prefix: nil)
-  func = adapter == "mysql2" ? "database" : "current_database"
+  func = ["mysql2", "trilogy"].include?(adapter) ? "database" : "current_database"
   ActiveRecord::Base.connection.select_all("#{prefix}SELECT #{func}()").rows.first.first.split("_").last
 end
 
 class Minitest::Test
   def setup
     # reset context
-    Makara::Context.release_all
+    ActiveRecord::Base.connection.send(:proxy).send(:current_context=, nil)
   end
 
   def by_default
@@ -44,7 +44,7 @@ class Minitest::Test
   end
 
   def with_replicas_down
-    ActiveRecord::Base.connection.instance_variable_get(:@slave_pool).stub(:completely_blacklisted?, true) do
+    ActiveRecord::Base.connection.send(:proxy).send(:replica_pool).stub(:checkout, ->(_) { raise ActiveRecord::ConnectionNotEstablished }) do
       yield
     end
   end
@@ -86,6 +86,6 @@ class Minitest::Test
   end
 
   def assert_cache_size(value)
-    assert_equal value, Makara::Context.send(:current).staged_data.size
+    assert_equal value, ActiveRecord::Base.connection.send(:proxy).send(:current_context)&.send(:timestamp_registry)&.size.to_i
   end
 end

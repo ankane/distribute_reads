@@ -7,7 +7,7 @@ module DistributeReads
     included do
       before_perform do
         if DistributeReads.by_default
-          Makara::Context.release_all
+          ActiveRecord::Base.connection.send(:proxy).send(:current_context=, nil)
         end
       end
     end

@@ -132,7 +132,7 @@ class LagTest < Minitest::Test
 
   def test_replication_lag_all_down
     with_replicas_down do
-      assert_raises DistributeReads::NoReplicasAvailable do
+      assert_raises ActiveRecord::ConnectionNotEstablished do
         DistributeReads.replication_lag
       end
     end

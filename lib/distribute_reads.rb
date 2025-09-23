@@ -1,6 +1,6 @@
 # dependencies
 require "active_support"
-require "makara"
+require "active_record_proxy_adapters"
 
 # modules
 require_relative "distribute_reads/appropriate_pool"
@@ -10,7 +10,6 @@ require_relative "distribute_reads/version"
 module DistributeReads
   class Error < StandardError; end
   class TooMuchLag < Error; end
-  class NoReplicasAvailable < Error; end
 
   class << self
     attr_accessor :by_default, :default_options, :eager_load
@@ -33,14 +32,9 @@ module DistributeReads
   def self.replication_lag(connection: nil)
     connection ||= ActiveRecord::Base.connection
 
-    replica_pool = connection.instance_variable_get(:@slave_pool)
-    if replica_pool && replica_pool.connections.size > 1
-      log "Multiple replicas available, lag only reported for one"
-    end
-
     with_replica do
       case connection.adapter_name
-      when "PostgreSQL", "PostGIS"
+      when "PostgreSQL", "PostGIS", "PostgreSQLProxy"
         # cache the version number
         @aurora_postgres ||= {}
         cache_key = connection.pool.object_id
@@ -79,7 +73,7 @@ module DistributeReads
             END AS lag".squish
           ).first["lag"].to_f
         end
-      when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo"
+      when "MySQL", "Mysql2", "Mysql2Spatial", "Mysql2Rgeo", "Mysql2Proxy", "TrilogyProxy"
         @aurora_mysql ||= {}
         cache_key = connection.pool.object_id
 
@@ -129,7 +123,7 @@ module DistributeReads
     @backtrace_cleaner ||= begin
       bc = ActiveSupport::BacktraceCleaner.new
       bc.add_silencer { |line| line.include?("lib/distribute_reads") }
-      bc.add_silencer { |line| line.include?("lib/makara") }
+      bc.add_silencer { |line| line.include?("lib/active_record_proxy_adapters") }
       bc.add_silencer { |line| line.include?("lib/active_record") }
       bc
     end
@@ -148,7 +142,14 @@ module DistributeReads
   private_class_method :with_replica
 end
 
-Makara::Proxy.prepend DistributeReads::AppropriatePool
+ActiveSupport.on_load(:active_record) do
+  require "active_record_proxy_adapters/connection_handling"
+  ActiveRecordProxyAdapters::PrimaryReplicaProxy.prepend DistributeReads::AppropriatePool
+
+  require "active_record_proxy_adapters/log_subscriber"
+  ActiveRecord::LogSubscriber.detach_from :active_record
+end
+
 Object.include DistributeReads::GlobalMethods
 Object.send :private, :distribute_reads
 

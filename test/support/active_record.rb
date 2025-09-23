@@ -2,37 +2,42 @@ require "active_record"
 
 logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDOUT : nil)
 ActiveRecord::Base.logger = logger
-# Makara::Logging::Logger.logger = logger
 ActiveRecord::Migration.verbose = ENV["VERBOSE"]
 
-ActiveRecord::Base.establish_connection(
-  adapter: "#{adapter}_makara",
-  makara: {
-    sticky: true,
-    connections: [
-      {
-        role: "master",
-        name: "primary",
-        database: "distribute_reads_test_primary"
-      },
-      {
-        name: "replica",
-        database: "distribute_reads_test_replica"
-      }
-    ]
+ActiveRecord::Base.configurations = {
+  default_env: {
+    primary: {
+      adapter: "#{adapter}_proxy",
+      database: "distribute_reads_test_primary"
+    },
+    replica: {
+      adapter: adapter,
+      database: "distribute_reads_test_replica",
+      replica: true
+    }
   }
-)
+}
+
+ActiveRecord::Base.establish_connection :primary
+
+class ApplicationRecord < ActiveRecord::Base
+  primary_abstract_class
+
+  connects_to database: {writing: :primary, reading: :replica}
+end
 
 ActiveRecord::Migration.create_table :users, force: true do |t|
   t.string :name
 end
 
 # create table on replica as well
-distribute_reads(replica: true) do
-  ActiveRecord::Migration.create_table :users, force: true do |t|
-    t.string :name
+ActiveRecord::Base.connected_to(role: :reading) do
+  ActiveRecord::Base.connection.stub(:preventing_writes?, false) do
+    ActiveRecord::Migration.create_table :users, force: true do |t|
+      t.string :name
+    end
   end
 end
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
 end

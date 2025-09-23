@@ -2,7 +2,9 @@
 
 Scale database reads to replicas in Rails
 
-:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
+**Distribute Reads 1.0 was recently released** - see [how to upgrade](#upgrading)
+
+:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource) with [Makara](https://github.com/instacart/makara)
 
 [![Build Status](https://github.com/ankane/distribute_reads/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/distribute_reads/actions)
 
@@ -16,19 +18,17 @@ gem "distribute_reads"
 
 ## How to Use
 
-[Makara](https://github.com/instacart/makara) does most of the work. First, update `database.yml` to use it:
+[ActiveRecordProxyAdapters](https://github.com/Nasdaq/active_record_proxy_adapters) does most of the work. First, update `config/database.yml` to use it:
 
 ```yml
 default: &default
-  url: postgresql-makara:///
-  makara:
-    sticky: true
-    connections:
-      - role: master
-        name: primary
-        url: <%= ENV["DATABASE_URL"] %>
-      - name: replica
-        url: <%= ENV["REPLICA_DATABASE_URL"] %>
+  primary:
+    adapter: postgresql_proxy
+    url: <%= ENV["DATABASE_URL"] %>
+  replica:
+    adapter: postgresql
+    url: <%= ENV["REPLICA_DATABASE_URL"] %>
+    replica: true
 
 development:
   <<: *default
@@ -38,6 +38,14 @@ production:
 ```
 
 **Note:** You can use the same instance for the primary and replica in development.
+
+Then add `connects_to` to `app/models/application_record.rb`:
+
+```ruby
+class ApplicationRecord < ActiveRecord::Base
+  connects_to database: {writing: :primary, reading: :replica}
+end
+```
 
 By default, all reads go to the primary instance. To use the replica, do:
 
@@ -128,7 +136,7 @@ If no replicas are available, primary is used. To prevent this situation from ov
 
 ```ruby
 distribute_reads(failover: false) do
-  # raises DistributeReads::NoReplicasAvailable
+  # ...
 end
 ```
 
@@ -177,7 +185,7 @@ Get replication lag in seconds
 DistributeReads.replication_lag
 ```
 
-Most of the time, Makara does a great job automatically routing queries to replicas. If it incorrectly routes a query to primary, you can use:
+Most of the time, ActiveRecordProxyAdapters does a great job automatically routing queries to replicas. If it incorrectly routes a query to primary, you can use:
 
 ```ruby
 distribute_reads(replica: true) do
@@ -199,7 +207,13 @@ However, it’s not able to do automatic statement-based routing yet.
 
 ## Thanks
 
-Thanks to [TaskRabbit](https://github.com/taskrabbit) for Makara, [Sherin Kurian](https://github.com/sherin) for the max lag option, and [Nick Elser](https://github.com/nickelser) for the write-through cache.
+Thanks to [Nasdaq](https://github.com/Nasdaq) for ActiveRecordProxyAdapters, [TaskRabbit](https://github.com/taskrabbit) for Makara, [Sherin Kurian](https://github.com/sherin) for the max lag option, and [Nick Elser](https://github.com/nickelser) for the write-through cache.
+
+## Upgrading
+
+### 1.0
+
+ActiveRecordProxyAdapters is now used instead of Makara. Update `config/database.yml` and `app/models/application_record.rb` to [use it](#how-to-use).
 
 ## History
 

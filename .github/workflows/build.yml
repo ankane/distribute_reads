@@ -8,7 +8,13 @@ jobs:
       matrix:
         include:
           - ruby: 3.4
+            gemfile: gemfiles/activerecord81.gemfile
+          - ruby: 3.4
             gemfile: Gemfile
+          - ruby: 3.3
+            gemfile: gemfiles/activerecord72.gemfile
+          - ruby: 3.2
+            gemfile: gemfiles/activerecord71.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
@@ -28,5 +34,6 @@ jobs:
       - run: |
           mysqladmin create distribute_reads_test_primary
           mysqladmin create distribute_reads_test_replica
-      # Active Record 7.1+ is currently broken
-      # - run: ADAPTER=mysql2 bundle exec rake test
+      - run: ADAPTER=mysql2 bundle exec rake test
+      # TODO uncomment when active_record_proxy_adapters > 0.8.0 released
+      # - run: ADAPTER=trilogy bundle exec rake test

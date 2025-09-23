@@ -91,7 +91,7 @@ class DistributeReadsTest < Minitest::Test
 
   def test_failover_false
     with_replicas_down do
-      assert_raises DistributeReads::NoReplicasAvailable do
+      assert_raises ActiveRecord::ConnectionNotEstablished do
         distribute_reads(failover: false) do
           run_query
         end
@@ -114,7 +114,7 @@ class DistributeReadsTest < Minitest::Test
   def test_by_default_failover_false
     by_default do
       with_replicas_down do
-        assert_raises DistributeReads::NoReplicasAvailable do
+        assert_raises ActiveRecord::ConnectionNotEstablished do
           distribute_reads(failover: false) do
             run_query
           end
@@ -179,7 +179,7 @@ class DistributeReadsTest < Minitest::Test
 
   def test_replica_failover_false
     with_replicas_down do
-      assert_raises DistributeReads::NoReplicasAvailable do
+      assert_raises ActiveRecord::ConnectionNotEstablished do
         distribute_reads(replica: true, failover: false) do
           run_query
         end

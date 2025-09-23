@@ -16,5 +16,5 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 3.2"
 
   spec.add_dependency "activerecord", ">= 7.1"
-  spec.add_dependency "makara", ">= 0.5"
+  spec.add_dependency "active_record_proxy_adapters", ">= 0.8"
 end
