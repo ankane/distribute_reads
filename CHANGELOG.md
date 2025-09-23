@@ -1,4 +1,4 @@
-## 1.0.0 (unreleased)
+## 1.0.0 (2025-09-23)
 
 - Added support for ActiveRecordProxyAdapters
 - Removed `default_to_primary` option (use `by_default` instead)
