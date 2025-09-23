@@ -134,7 +134,7 @@ end
 
 ### Default Options
 
-Change the defaults
+Change the defaults for `distribute_reads` blocks
 
 ```ruby
 DistributeReads.default_options = {
