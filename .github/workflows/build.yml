@@ -35,5 +35,4 @@ jobs:
           mysqladmin create distribute_reads_test_primary
           mysqladmin create distribute_reads_test_replica
       - run: ADAPTER=mysql2 bundle exec rake test
-      # TODO uncomment when active_record_proxy_adapters > 0.8.0 released
-      # - run: ADAPTER=trilogy bundle exec rake test
+      - run: ADAPTER=trilogy bundle exec rake test
