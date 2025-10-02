@@ -4,16 +4,21 @@ logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDOUT : nil)
 ActiveRecord::Base.logger = logger
 ActiveRecord::Migration.verbose = ENV["VERBOSE"]
 
+options = {}
+options[:host] = "127.0.0.1" if adapter == "trilogy"
+
 ActiveRecord::Base.configurations = {
   default_env: {
     primary: {
       adapter: "#{adapter}_proxy",
-      database: "distribute_reads_test_primary"
+      database: "distribute_reads_test_primary",
+      **options
     },
     replica: {
       adapter: adapter,
       database: "distribute_reads_test_replica",
-      replica: true
+      replica: true,
+      **options
     }
   }
 }
