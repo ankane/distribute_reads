@@ -4,8 +4,8 @@ gemspec
 
 gem "rake"
 gem "minitest"
-gem "activerecord", "~> 8.0.0"
-gem "activejob", "~> 8.0.0"
+gem "activerecord", "~> 8.1.0.rc1"
+gem "activejob", "~> 8.1.0.rc1"
 gem "pg"
 gem "mysql2"
 gem "trilogy"
