@@ -31,15 +31,19 @@ class ApplicationRecord < ActiveRecord::Base
   connects_to database: {writing: :primary, reading: :replica}
 end
 
-ActiveRecord::Migration.create_table :users, force: true do |t|
-  t.string :name
+ActiveRecord::Schema.define do
+  create_table :users, force: true do |t|
+    t.string :name
+  end
 end
 
 # create table on replica as well
 ActiveRecord::Base.connected_to(role: :reading) do
   ActiveRecord::Base.connection.stub(:preventing_writes?, false) do
-    ActiveRecord::Migration.create_table :users, force: true do |t|
-      t.string :name
+    ActiveRecord::Schema.define do
+      create_table :users, force: true do |t|
+        t.string :name
+      end
     end
   end
 end
