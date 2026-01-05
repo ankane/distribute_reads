@@ -6,6 +6,18 @@ def adapter
   ENV["ADAPTER"] || "postgresql"
 end
 
+def stub_method(cls, method, code)
+  original_code = cls.method(method)
+  begin
+    cls.singleton_class.undef_method(method)
+    cls.define_singleton_method(method, code.respond_to?(:call) ? code : ->(*) { code })
+    yield
+  ensure
+    cls.singleton_class.undef_method(method) if cls.singleton_class.method_defined?(method)
+    cls.define_singleton_method(method, original_code)
+  end
+end
+
 require_relative "support/active_record"
 require_relative "support/active_job"
 
@@ -25,31 +37,31 @@ class Minitest::Test
   end
 
   def by_default
-    DistributeReads.stub(:by_default, true) do
+    stub_method(DistributeReads, :by_default, true) do
       yield
     end
   end
 
   def with_default_options(options)
-    DistributeReads.stub(:default_options, options) do
+    stub_method(DistributeReads, :default_options, options) do
       yield
     end
   end
 
   def with_eager_load
-    DistributeReads.stub(:eager_load, true) do
+    stub_method(DistributeReads, :eager_load, true) do
       yield
     end
   end
 
   def with_replicas_down
-    ActiveRecord::Base.connection.send(:proxy).send(:replica_pool).stub(:checkout, ->(_) { raise ActiveRecord::ConnectionNotEstablished }) do
+    stub_method(ActiveRecord::Base.connection.send(:proxy).send(:replica_pool), :checkout, ->(_) { raise ActiveRecord::ConnectionNotEstablished }) do
       yield
     end
   end
 
   def with_lag(lag)
-    DistributeReads.stub(:replication_lag, lag) do
+    stub_method(DistributeReads, :replication_lag, lag) do
       yield
     end
   end
@@ -57,7 +69,7 @@ class Minitest::Test
   def prepare_log
     io = StringIO.new
     logger = ActiveSupport::BroadcastLogger.new(ActiveSupport::Logger.new(io), ActiveRecord::Base.logger)
-    DistributeReads.stub(:logger, logger) do
+    stub_method(DistributeReads, :logger, logger) do
       yield
     end
     io.string

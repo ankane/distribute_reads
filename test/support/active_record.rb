@@ -39,7 +39,7 @@ end
 
 # create table on replica as well
 ActiveRecord::Base.connected_to(role: :reading) do
-  ActiveRecord::Base.connection.stub(:preventing_writes?, false) do
+  stub_method(ActiveRecord::Base.connection, :preventing_writes?, false) do
     ActiveRecord::Schema.define do
       create_table :users, force: true do |t|
         t.string :name
