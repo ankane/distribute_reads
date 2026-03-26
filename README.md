@@ -23,10 +23,10 @@ gem "distribute_reads"
 ```yml
 default: &default
   primary:
-    adapter: postgresql_proxy
+    # should start with postgresql-proxy://, mysql2-proxy://, or trilogy-proxy://
     url: <%= ENV["DATABASE_URL"] %>
   replica:
-    adapter: postgresql
+    # should start with postgresql://, mysql2://, or trilogy://
     url: <%= ENV["REPLICA_DATABASE_URL"] %>
     replica: true
 
