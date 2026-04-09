@@ -16,4 +16,3 @@ class ReadWriteJob < ActiveJob::Base
     insert_value
   end
 end
-
