@@ -1,3 +1,7 @@
+## 1.1.1 (unreleased)
+
+- Fixed connection leasing for ActiveRecordProxyAdapters 0.11.1
+
 ## 1.1.0 (2026-04-01)
 
 - Dropped support for Ruby < 3.3 and Active Record < 7.2

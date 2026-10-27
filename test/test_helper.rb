@@ -55,8 +55,15 @@ class Minitest::Test
   end
 
   def with_replicas_down
-    stub_method(ActiveRecord::Base.connection.send(:proxy).send(:replica_pool), :checkout, ->(_) { raise ActiveRecord::ConnectionNotEstablished }) do
-      yield
+    replica_pool = ActiveRecord::Base.connection.send(:proxy).send(:replica_pool)
+    if Gem::Version.new(ActiveRecordProxyAdapters::VERSION) >= Gem::Version.new("0.11.1")
+      stub_method(replica_pool, :lease_connection, -> { raise ActiveRecord::ConnectionNotEstablished }) do
+        yield
+      end
+    else
+      stub_method(replica_pool, :checkout, ->(_) { raise ActiveRecord::ConnectionNotEstablished }) do
+        yield
+      end
     end
   end
 

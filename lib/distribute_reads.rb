@@ -1,6 +1,7 @@
 # dependencies
 require "active_support"
 require "active_record_proxy_adapters"
+require "active_record_proxy_adapters/version"
 
 # modules
 require_relative "distribute_reads/appropriate_pool"

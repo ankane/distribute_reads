@@ -34,8 +34,14 @@ module DistributeReads
     end
 
     # defer error handling to connection_for
-    def checkout_replica_connection
-      replica_pool.checkout(proxy_checkout_timeout)
+    if Gem::Version.new(ActiveRecordProxyAdapters::VERSION) >= Gem::Version.new("0.11.1")
+      def checkout_replica_connection
+        replica_pool.lease_connection
+      end
+    else
+      def checkout_replica_connection
+        replica_pool.checkout(proxy_checkout_timeout)
+      end
     end
 
     def update_primary_latest_write_timestamp(...)
