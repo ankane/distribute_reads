@@ -2,8 +2,6 @@
 
 Scale database reads to replicas in Rails
 
-**Distribute Reads 1.0 was recently released** - see [how to upgrade](#upgrading)
-
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource) with [Makara](https://github.com/instacart/makara)
 
 [![Build Status](https://github.com/ankane/distribute_reads/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/distribute_reads/actions)
