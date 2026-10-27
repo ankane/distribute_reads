@@ -1,4 +1,4 @@
-## 1.1.1 (unreleased)
+## 1.1.1 (2026-10-27)
 
 - Fixed connection leasing for ActiveRecordProxyAdapters 0.11.1
 
